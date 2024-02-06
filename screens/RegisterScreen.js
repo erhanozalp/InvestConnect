@@ -7,17 +7,16 @@ import {
   StyleSheet,
   Image,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 
-const LoginScreen = () => {
-  const navigation = useNavigation();
+const RegisterScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
 
-  const handleLogin = () => {
-    // Burada giriş doğrulama işlemleri yapılacak
-    console.log("Giriş yapıldı:", username, password);
-    navigation.navigate('Main');
+  const handleRegister = () => {
+    // Burada kayıt işlemi için API çağrısı yapılacak
+    console.log("Kayıt bilgileri:", username, email, password, passwordConfirm);
   };
 
   return (
@@ -34,24 +33,34 @@ const LoginScreen = () => {
       />
       <TextInput
         style={styles.input}
+        placeholder="E-posta"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+      />
+      <TextInput
+        style={styles.input}
         placeholder="Şifre"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
       />
+      <TextInput
+        style={styles.input}
+        placeholder="Şifre Tekrarı"
+        secureTextEntry
+        value={passwordConfirm}
+        onChangeText={setPasswordConfirm}
+      />
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Giriş Yap</Text>
+      <TouchableOpacity style={styles.button} onPress={handleRegister}>
+        <Text style={styles.buttonText}>Kayıt Ol</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity>
-        <Text style={styles.forgotPasswordText}>Şifrenizi mi unuttunuz?</Text>
-      </TouchableOpacity>
-
-      <View style={styles.registerContainer}>
-        <Text>Yeni kullanıcı mısınız? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-          <Text style={styles.registerText}>Kayıt Ol</Text>
+      <View style={styles.loginContainer}>
+        <Text>Zaten bir hesabınız var mı? </Text>
+        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+          <Text style={styles.loginText}>Giriş Yap</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -61,7 +70,7 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "flex-start", 
+    justifyContent: "flex-start", // İçeriği yukarıya yaklaştır
     alignItems: "center",
     backgroundColor: "#eceff1",
     paddingTop: 30, // Üstten boşluk ekle
@@ -111,14 +120,14 @@ const styles = StyleSheet.create({
   forgotPasswordText: {
     color: "#ff5252", // Unuttum metni rengini de buton rengiyle uyumlu yaptık
   },
-  registerContainer: {
+  loginContainer: {
     flexDirection: "row",
     marginTop: 10,
   },
-  registerText: {
-    color: "#ff5252", // Kayıt ol metni rengini de buton rengiyle uyumlu yaptık
+  loginText: {
+    color: "#ff5252", // Giriş yap metni rengini buton rengiyle uyumlu yaptık
     fontWeight: "bold",
   },
 });
 
-export default LoginScreen;
+export default RegisterScreen;
