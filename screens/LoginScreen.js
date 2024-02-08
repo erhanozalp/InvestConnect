@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start", 
     alignItems: "center",
     backgroundColor: "#eceff1",
-    paddingTop: 30, // Üstten boşluk ekle
+    paddingTop: 30, 
   },
   logoContainer: {
     marginBottom: 25,
@@ -72,22 +72,22 @@ const styles = StyleSheet.create({
   },
   logo: {
     marginTop: 50,
-    width: 150, // Logoyu büyüttük
-    height: 150, // Logoyu büyüttük
+    width: 150, 
+    height: 150, 
     resizeMode: "contain",
-    borderRadius: 75, // Logo kenarlarını yuvarlak yaptık
+    borderRadius: 75, 
   },
   input: {
     width: "80%",
-    height: 50, // Input yüksekliğini artırdık
-    backgroundColor: "white", // Arka plan rengini beyaz yaptık
-    borderColor: "#ddd", // Kenarlık rengini daha soft bir tona ayarladık
+    height: 50, 
+    backgroundColor: "white", 
+    borderColor: "#ddd", 
     borderWidth: 1,
-    borderRadius: 25, // Köşeleri yuvarlak yaptık
+    borderRadius: 25,
     marginBottom: 15,
     paddingLeft: 20,
-    fontSize: 16, // Font boyutunu büyüttük
-    shadowColor: "#000", // Gölge ekledik
+    fontSize: 16, 
+    shadowColor: "#000", 
     shadowOffset: {
       width: 0,
       height: 2,
@@ -97,10 +97,10 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   button: {
-    backgroundColor: "#ff5252", // Buton rengini daha canlı bir tona ayarladık
+    backgroundColor: "#ff5252", 
     width: "80%",
     padding: 10,
-    borderRadius: 20, // Buton kenarlarını yuvarlak yaptık
+    borderRadius: 20,
     alignItems: "center",
     marginBottom: 10,
   },
@@ -109,14 +109,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   forgotPasswordText: {
-    color: "#ff5252", // Unuttum metni rengini de buton rengiyle uyumlu yaptık
+    color: "#ff5252", 
   },
   registerContainer: {
     flexDirection: "row",
     marginTop: 10,
   },
   registerText: {
-    color: "#ff5252", // Kayıt ol metni rengini de buton rengiyle uyumlu yaptık
+    color: "#ff5252",
     fontWeight: "bold",
   },
 });

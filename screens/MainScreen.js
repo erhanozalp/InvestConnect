@@ -1,10 +1,9 @@
 import React from "react";
 import { View, StyleSheet, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome';
-import CustomTabBar from '../navigation/CustomTabBar';
+// import CustomTabBar from '../navigation/CustomTabBar';
 
 const MainScreen = ({navigation}) => {
-  // Bu örnek için sabit veri, gerçek uygulamada bu veriler bir API'dan gelebilir
 
   const images = {
     user1: require("../assets/user1.png"),
@@ -46,8 +45,6 @@ const MainScreen = ({navigation}) => {
         </TouchableOpacity>
       </View>
 
-      {/* CustomTabBar bileşenini ekleyin */}
-      <CustomTabBar navigation={navigation} />
     </View>
   );
 };
@@ -88,10 +85,9 @@ const styles = StyleSheet.create({
     },
     actionText: {
       fontSize: 18, // Buton yazı font büyüklüğü
-      color: '#ff5252', // Buton yazı rengi
-      fontWeight: 'bold', // Buton yazı kalınlığı
+      color: '#ff5252', 
+      fontWeight: 'bold', 
     },
-    // CustomTabBar stil tanımlamalarınız (varsa)
   });
 
 export default MainScreen;

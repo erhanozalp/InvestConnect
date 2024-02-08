@@ -5,11 +5,11 @@ const ProfileEditScreen = () => {
   const [name, setName] = useState('Mert');
   const [age, setAge] = useState('29');
   const [bio, setBio] = useState('Biraz sanat, biraz teknoloji...');
-  const [profileImage, setProfileImage] = useState(require('../assets/user2.png')); // Profil resminizi buraya ekleyin
+  const [profileImage, setProfileImage] = useState(require('../assets/user2.png')); 
 
   const handleSave = () => {
     // Kullanıcı bilgilerini kaydetme işlemleri
-    console.log('Kaydedilen bilgiler:', { name, age, bio });
+    console.log('Kaydedilen:', { name, age, bio });
   };
 
   return (

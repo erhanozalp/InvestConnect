@@ -15,7 +15,6 @@ const RegisterScreen = ({ navigation }) => {
   const [passwordConfirm, setPasswordConfirm] = useState("");
 
   const handleRegister = () => {
-    // Burada kayıt işlemi için API çağrısı yapılacak
     console.log("Kayıt bilgileri:", username, email, password, passwordConfirm);
   };
 
