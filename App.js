@@ -10,7 +10,7 @@ import MainScreen from "./screens/MainScreen";
 import ProfileEditScreen from "./screens/ProfileEditScreen";
 import ChatScreen from "./screens/ChatScreen";
 import ChatListScreen from "./screens/ChatListScreen";
-// import SearchScreen from './screens/SearchScreen';
+import SearchScreen from './screens/SearchScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -43,9 +43,9 @@ function MainTabScreen() {
           } else if (route.name === "Chat") {
             iconName = "comments";
           }
-          // else if (route.name === 'Arama') {
-          //   iconName = 'search';
-          // }
+          else if (route.name === 'Arama') {
+            iconName = 'search';
+          }
           return <Icon name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: "tomato",
@@ -58,17 +58,20 @@ function MainTabScreen() {
         component={MainScreen}
         options={{ headerShown: true, title: "Ana Sayfa" }} 
       />
-      <Tab.Screen
-        name="Profil"
-        component={ProfileEditScreen}
-        options={{ headerShown: true, title: "Profilim" }} 
-      />
+       <Tab.Screen name="Arama" component={SearchScreen}
+       options={{ headerShown: true, title: "Search" }}  />
       <Tab.Screen
         name="Chat"
         component={ChatStackScreen}
         options={{ title: "Sohbet" }} 
       />
-      {/* <Tab.Screen name="Arama" component={SearchScreen} /> */}
+      <Tab.Screen
+        name="Profil"
+        component={ProfileEditScreen}
+        options={{ headerShown: true, title: "Profilim" }} 
+      />
+      
+     
     </Tab.Navigator>
   );
 }
