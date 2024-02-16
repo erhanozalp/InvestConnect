@@ -11,6 +11,7 @@ import ProfileEditScreen from "./screens/ProfileEditScreen";
 import ChatScreen from "./screens/ChatScreen";
 import ChatListScreen from "./screens/ChatListScreen";
 import SearchScreen from './screens/SearchScreen';
+import UploadScreen from './screens/UploadScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -46,6 +47,9 @@ function MainTabScreen() {
           else if (route.name === 'Arama') {
             iconName = 'search';
           }
+          else if (route.name === 'Yükle') {
+            iconName = 'upload';
+          }
           return <Icon name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: "tomato",
@@ -60,6 +64,11 @@ function MainTabScreen() {
       />
        <Tab.Screen name="Arama" component={SearchScreen}
        options={{ headerShown: true, title: "Search" }}  />
+         <Tab.Screen
+        name="Yükle"
+        component={UploadScreen}
+        options={{ headerShown: true, title: "Yükle" }} 
+      />
       <Tab.Screen
         name="Chat"
         component={ChatStackScreen}
@@ -70,6 +79,7 @@ function MainTabScreen() {
         component={ProfileEditScreen}
         options={{ headerShown: true, title: "Profilim" }} 
       />
+    
       
      
     </Tab.Navigator>

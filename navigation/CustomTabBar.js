@@ -15,6 +15,11 @@ const CustomTabBar = ({ navigation }) => {
         <Text>Arama</Text>
       </TouchableOpacity>
 
+      <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Upload')}>
+        <Icon name="upload" size={20} /> {/* Yükleme ikonu burada */}
+        <Text>Yükle</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Chat')}>
         <Icon name="comments" size={20} />
         <Text>Chat</Text>
