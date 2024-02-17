@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,25 +10,86 @@ import {
   Keyboard,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import RNPickerSelect from 'react-native-picker-select';
-import Icon from 'react-native-vector-icons/FontAwesome'; // Ikon kütüphanesi
+import RNPickerSelect from "react-native-picker-select";
+import Icon from "react-native-vector-icons/FontAwesome"; // Ikon kütüphanesi
+import { collection, doc, setDoc, getDoc, getDocs } from "firebase/firestore";
+import { FIREBASE_DB } from "../firebase";
+import { auth } from "../firebase";
 
 const UploadScreen = () => {
   const navigation = useNavigation();
   const [projectName, setProjectName] = useState("");
   const [budget, setBudget] = useState("");
-  const [owner, setOwner] = useState("");
   const [status, setStatus] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
   const [entrepreneurId, setEntrepreneurId] = useState("");
   const [image, setImage] = useState(null);
 
-  const handleUpload = () => {
-    console.log("Proje yüklendi:", projectName, budget, owner, status, category, description, entrepreneurId, image);
+  const handleUpload = async () => {
+    console.log(
+      "Proje yüklendi:",
+      projectName,
+      budget,
+      status,
+      category,
+      description,
+      entrepreneurId,
+      image
+    );
+
+    //Giriş yapanın id verilecek
+    const user = auth.currentUser;
+
+    // Yeni bir proje oluştur
+    const docData = {
+      name: projectName,
+      description: description,
+      category: category,
+      budget: budget,
+      photo: 123,
+      status: status,
+      entrepreneurId: null,
+    };
+
+    const querySnapshot = await getDocs(collection(FIREBASE_DB, "users"));
+    querySnapshot.forEach((doc) => {
+      if (doc.data().email.toLowerCase() === user.email) {
+        docData.entrepreneurId = doc.id;
+      }
+      console.log(doc.id, " => ", doc.data());
+    });
+
+    await setDoc(doc(FIREBASE_DB, "project", user.email), docData);
+
     // Klavyeyi kapat
     Keyboard.dismiss();
   };
+
+  useEffect(async () => {
+    const user = auth.currentUser;
+    console.log("user", user);
+    console.log("gerçek user benim lan", user.email);
+
+    // const fetchData = async () => {
+    //   console.log("fetchData fonksiyonu çağrıldı.");
+    //   try {
+    //     console.log("fetchData");
+    //     const querySnapshot = await getDocs(projectRef);
+    //     console.log("querySnapshot", querySnapshot);
+    //     const data = [];
+    //     querySnapshot.forEach((doc) => {
+    //       data.push({ ...doc.data() });
+    //       console.log("docs", doc.data());
+    //     });
+    //     console.log("data", data);
+    //     setCards(data);
+    //   } catch (error) {
+    //     console.error("fetchData fonksiyonunda bir hata oluştu:", error);
+    //   }
+    // };
+    // fetchData();
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -40,13 +101,13 @@ const UploadScreen = () => {
         <View style={styles.inputRow}>
           <TextInput
             style={styles.inputHalf}
-            placeholder="Proje Adı"
+            placeholder="Project Name"
             value={projectName}
             onChangeText={setProjectName}
           />
           <TextInput
             style={styles.inputHalf}
-            placeholder="Bütçe"
+            placeholder="Project Budget"
             value={budget}
             onChangeText={setBudget}
           />
@@ -55,30 +116,21 @@ const UploadScreen = () => {
         <View style={styles.inputRow}>
           <TextInput
             style={styles.inputHalf}
-            placeholder="Sahip"
-            value={owner}
-            onChangeText={setOwner}
-          />
-          <TextInput
-            style={styles.inputHalf}
-            placeholder="Durum"
+            placeholder="Project Status"
             value={status}
             onChangeText={setStatus}
           />
-        </View>
-
-        <View style={styles.inputRow}>
           <View style={styles.pickerContainer}>
             <RNPickerSelect
               style={{ inputAndroid: { ...pickerSelectStyles.inputAndroid } }}
               onValueChange={(value) => setCategory(value)}
-              placeholder={{ label: 'Kategori Seçin', value: null }}
+              placeholder={{ label: "Select Category", value: null }}
               items={[
-                { label: 'Kategori 1', value: 'category1' },
-                { label: 'Kategori 2', value: 'category2' },
-                { label: 'Kategori 3', value: 'category3' },
-                { label: 'Kategori 4', value: 'category4' },
-                { label: 'Kategori 5', value: 'category5' },
+                { label: "Kategori 1", value: "category1" },
+                { label: "Kategori 2", value: "category2" },
+                { label: "Kategori 3", value: "category3" },
+                { label: "Kategori 4", value: "category4" },
+                { label: "Kategori 5", value: "category5" },
               ]}
               Icon={() => {
                 return <Icon name="caret-down" size={24} color="gray" />;
@@ -86,24 +138,28 @@ const UploadScreen = () => {
             />
           </View>
         </View>
-
         <TextInput
           style={styles.input}
-          placeholder="Proje Açıklaması"
+          placeholder="Project Description"
           multiline
           value={description}
           onChangeText={setDescription}
           numberOfLines={4} // İstediğiniz kadar satır
-          onFocus={() => { setDescription("") }} // İlgili alana tıklandığında içeriği temizle
+          onFocus={() => {
+            setDescription("");
+          }} // İlgili alana tıklandığında içeriği temizle
         />
 
         {/* Resim yükleme alanı */}
-        <TouchableOpacity style={styles.imageUploadButton} onPress={() => console.log("Resim yükleme butonuna basıldı")}>
-          <Text style={styles.imageUploadButtonText}>Resim Yükle</Text>
+        <TouchableOpacity
+          style={styles.imageUploadButton}
+          onPress={() => console.log("Resim yükleme butonuna basıldı")}
+        >
+          <Text style={styles.imageUploadButtonText}>Upload Project Image</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.button} onPress={handleUpload}>
-          <Text style={styles.buttonText}>Yükle</Text>
+          <Text style={styles.buttonText}>Upload Project</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -115,18 +171,18 @@ const pickerSelectStyles = StyleSheet.create({
     fontSize: 16,
     paddingHorizontal: 10,
     borderWidth: 1,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderRadius: 25,
-    color: 'black',
+    color: "black",
     paddingRight: 30, // to ensure the text is never behind the icon
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
 });
 
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   container: {
     flex: 1,
@@ -168,17 +224,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
     elevation: 5,
-    width: '47%',
+    width: "47%",
     height: 50,
   },
   pickerContainer: {
-    width: '47%',
+    width: "47%",
     height: 50,
-    justifyContent: 'center',
+    justifyContent: "center",
     borderRadius: 25,
     borderWidth: 1,
-    borderColor: 'gray',
-    backgroundColor: 'white',
+    borderColor: "gray",
+    backgroundColor: "white",
     paddingLeft: 10,
   },
   input: {
@@ -196,9 +252,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
     elevation: 5,
-    width: '80%',
+    width: "80%",
     height: 150, // Yükseklik ayarlanabilir
-    textAlignVertical: 'top', // Metni yukarıya hizalama
+    textAlignVertical: "top", // Metni yukarıya hizalama
     marginBottom: 10, // Boşluk ekleyin
   },
   imageUploadButton: {

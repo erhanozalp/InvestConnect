@@ -10,6 +10,8 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
+import { collection, doc, setDoc, getDoc, getDocs } from "firebase/firestore";
+import { FIREBASE_DB } from "../firebase";
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -17,12 +19,32 @@ const LoginScreen = () => {
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
-    try{
-      const userCredential = await signInWithEmailAndPassword(auth,email, password);
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
-      navigation.navigate("Main");
-    }
-    catch (error){
+
+      if (user) {
+        const docRef = doc(FIREBASE_DB, "users", email);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          console.log("Document data:", docSnap.data());
+        } else {
+          // docSnap.data() will be undefined in this case
+          console.log("No such document!");
+        }
+
+        if (docSnap.data().userType === "investor") {
+          navigation.navigate("Main");
+        } else {
+          navigation.navigate("Upload");
+        }
+      }
+    } catch (error) {
       console.log("Error", error.message);
     }
   };

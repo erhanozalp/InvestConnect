@@ -44,7 +44,7 @@ const RegisterScreen = ({ navigation }) => {
         if (userType === "investor") {
           navigation.navigate("Main");
         } else {
-          //Girişimci sayfasına yönlendir;
+          navigation.navigate("Upload");
         }
       }
     } catch (error) {

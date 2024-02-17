@@ -10,8 +10,8 @@ import MainScreen from "./screens/MainScreen";
 import ProfileEditScreen from "./screens/ProfileEditScreen";
 import ChatScreen from "./screens/ChatScreen";
 import ChatListScreen from "./screens/ChatListScreen";
-import SearchScreen from './screens/SearchScreen';
-import UploadScreen from './screens/UploadScreen';
+import SearchScreen from "./screens/SearchScreen";
+import UploadScreen from "./screens/UploadScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -37,18 +37,16 @@ function MainTabScreen() {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
-          if (route.name === "Ana Sayfa") {
+          if (route.name === "Main Screen") {
             iconName = "home";
-          } else if (route.name === "Profil") {
+          } else if (route.name === "Profile") {
             iconName = "user";
           } else if (route.name === "Chat") {
             iconName = "comments";
-          }
-          else if (route.name === 'Arama') {
-            iconName = 'search';
-          }
-          else if (route.name === 'Yükle') {
-            iconName = 'upload';
+          } else if (route.name === "Search") {
+            iconName = "search";
+          } else if (route.name === "Upload") {
+            iconName = "upload";
           }
           return <Icon name={iconName} size={size} color={color} />;
         },
@@ -58,30 +56,30 @@ function MainTabScreen() {
       })}
     >
       <Tab.Screen
-        name="Ana Sayfa"
+        name="Main Screen"
         component={MainScreen}
-        options={{ headerShown: true, title: "Ana Sayfa" }} 
+        options={{ headerShown: true, title: "Main Screen" }}
       />
-       <Tab.Screen name="Arama" component={SearchScreen}
-       options={{ headerShown: true, title: "Search" }}  />
-         <Tab.Screen
-        name="Yükle"
+      <Tab.Screen
+        name="Search"
+        component={SearchScreen}
+        options={{ headerShown: true, title: "Search" }}
+      />
+      <Tab.Screen
+        name="Upload"
         component={UploadScreen}
-        options={{ headerShown: true, title: "Yükle" }} 
+        options={{ headerShown: true, title: "Upload Project" }}
       />
       <Tab.Screen
         name="Chat"
         component={ChatStackScreen}
-        options={{ title: "Sohbet" }} 
+        options={{ title: "Chat" }}
       />
       <Tab.Screen
-        name="Profil"
+        name="Profile"
         component={ProfileEditScreen}
-        options={{ headerShown: true, title: "Profilim" }} 
+        options={{ headerShown: true, title: "My Profile" }}
       />
-    
-      
-     
     </Tab.Navigator>
   );
 }
@@ -103,6 +101,11 @@ function App() {
         <Stack.Screen
           name="Main"
           component={MainTabScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Upload"
+          component={UploadScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
