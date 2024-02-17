@@ -25,12 +25,17 @@ const MainScreen = ({ navigation }) => {
       <View key={index} style={styles.card}>
         <View style={styles.textContainer}>
           <Text style={styles.cardName}>{`${card.name}`}</Text>
+          <Image
+            source={{
+              uri: card.photo,
+            }}
+            style={styles.cardImage}
+          />
+          <Text>{`${card.category}`}</Text>
           <Text>{`${card.description}`}</Text>
-          <Text >{`${card.category}`}</Text>
-          <Text >{`${card.budget}`}</Text>
-          <Text >{`${card.owner}`}</Text>
-          <Text >{`${card.photo}`}</Text>
-          <Text >{`${card.status}`}</Text>
+          <Text>{`${card.budget}`}</Text>
+          <Text>{`${card.owner}`}</Text>
+          <Text>{`${card.status}`}</Text>
         </View>
       </View>
     );
@@ -72,74 +77,74 @@ const MainScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       {cards.length > 0 && (
-      <Swiper
-        cards={cards}
-        renderCard={renderCard}
-        onSwipedLeft={handleDislike}
-        onSwipedRight={handleLike}
-        onSwipedTop={handleSuperLike}
-        stackSize={3}
-        backgroundColor={"transparent"}
-        cardIndex={0}
-        infinite
-        verticalSwipe={false}
-        containerStyle={styles.swiperContainer}
-        animateOverlayLabelsOpacity
-        overlayLabels={{
-          left: {
-            title: "NOPE",
-            style: {
-              label: {
-                backgroundColor: "red",
-                borderColor: "red",
-                color: "white",
-                borderWidth: 1,
-              },
-              wrapper: {
-                flexDirection: "column",
-                alignItems: "flex-end",
-                justifyContent: "flex-start",
-                marginTop: 20,
-                marginLeft: -20,
-              },
-            },
-          },
-          right: {
-            title: "LIKE",
-            style: {
-              label: {
-                backgroundColor: "green",
-                borderColor: "green",
-                color: "white",
-                borderWidth: 1,
-              },
-              wrapper: {
-                flexDirection: "column",
-                alignItems: "flex-start",
-                justifyContent: "flex-start",
-                marginTop: 20,
-                marginLeft: 20,
+        <Swiper
+          cards={cards}
+          renderCard={renderCard}
+          onSwipedLeft={handleDislike}
+          onSwipedRight={handleLike}
+          onSwipedTop={handleSuperLike}
+          stackSize={3}
+          backgroundColor={"transparent"}
+          cardIndex={0}
+          infinite
+          verticalSwipe={false}
+          containerStyle={styles.swiperContainer}
+          animateOverlayLabelsOpacity
+          overlayLabels={{
+            left: {
+              title: "NOPE",
+              style: {
+                label: {
+                  backgroundColor: "red",
+                  borderColor: "red",
+                  color: "white",
+                  borderWidth: 1,
+                },
+                wrapper: {
+                  flexDirection: "column",
+                  alignItems: "flex-end",
+                  justifyContent: "flex-start",
+                  marginTop: 20,
+                  marginLeft: -20,
+                },
               },
             },
-          },
-          top: {
-            title: "SUPER LIKE",
-            style: {
-              label: {
-                backgroundColor: "blue",
-                borderColor: "blue",
-                color: "white",
-                borderWidth: 1,
-              },
-              wrapper: {
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
+            right: {
+              title: "LIKE",
+              style: {
+                label: {
+                  backgroundColor: "green",
+                  borderColor: "green",
+                  color: "white",
+                  borderWidth: 1,
+                },
+                wrapper: {
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  justifyContent: "flex-start",
+                  marginTop: 20,
+                  marginLeft: 20,
+                },
               },
             },
-          },
-        }}
-      />
+            top: {
+              title: "SUPER LIKE",
+              style: {
+                label: {
+                  backgroundColor: "blue",
+                  borderColor: "blue",
+                  color: "white",
+                  borderWidth: 1,
+                },
+                wrapper: {
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+              },
+            },
+          }}
+        />
       )}
       {/* Eylem butonları */}
     </View>
@@ -168,7 +173,7 @@ const styles = StyleSheet.create({
   },
   cardImage: {
     width: "100%",
-    height: "75%",
+    height: "55%",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },

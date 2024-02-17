@@ -13,8 +13,10 @@ import { useNavigation } from "@react-navigation/native";
 import RNPickerSelect from "react-native-picker-select";
 import Icon from "react-native-vector-icons/FontAwesome"; // Ikon kütüphanesi
 import { collection, doc, setDoc, getDoc, getDocs } from "firebase/firestore";
-import { FIREBASE_DB } from "../firebase";
+import { FIREBASE_DB, storage } from "../firebase";
 import { auth } from "../firebase";
+import * as ImagePicker from "expo-image-picker";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const UploadScreen = () => {
   const navigation = useNavigation();
@@ -25,6 +27,40 @@ const UploadScreen = () => {
   const [description, setDescription] = useState("");
   const [entrepreneurId, setEntrepreneurId] = useState("");
   const [image, setImage] = useState(null);
+
+  const handleImageUpload = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      aspect: [16, 9],
+      quality: 1,
+    });
+
+    console.log("Seçilen fotoğraf:", result);
+
+    if (!result.cancelled) {
+      try {
+        const imageName = result.assets[0].uri.substring(
+          result.assets[0].uri.lastIndexOf("/") + 1
+        );
+        const response = await fetch(result.assets[0].uri);
+        const blob = await response.blob();
+        const storageRef = ref(storage, `images/${imageName}`);
+
+        await uploadBytes(storageRef, blob);
+        console.log("Resim başarıyla yüklendi.");
+
+        // Firebase Storage'da yükleme işlemi başarılı olduğunda, dosyanın URL'sini alabilirsiniz.
+        const downloadURL = await getDownloadURL(storageRef);
+        console.log("Dosyanın URL'si:", downloadURL);
+        setImage(downloadURL);
+
+        // setImage(downloadURL); // Eğer gerekliyse resmin URL'sini saklamak için bu satırı kullanabilirsiniz.
+      } catch (error) {
+        console.error("Resim yüklenirken hata oluştu:", error);
+      }
+    }
+  };
 
   const handleUpload = async () => {
     console.log(
@@ -47,17 +83,18 @@ const UploadScreen = () => {
       description: description,
       category: category,
       budget: budget,
-      photo: 123,
+      photo: image,
       status: status,
       entrepreneurId: null,
+      owner: null,
     };
 
     const querySnapshot = await getDocs(collection(FIREBASE_DB, "users"));
     querySnapshot.forEach((doc) => {
       if (doc.data().email.toLowerCase() === user.email) {
         docData.entrepreneurId = doc.id;
+        docData.owner = doc.data().name + " " + doc.data().surname;
       }
-      console.log(doc.id, " => ", doc.data());
     });
 
     await setDoc(doc(FIREBASE_DB, "project", user.email), docData);
@@ -65,31 +102,6 @@ const UploadScreen = () => {
     // Klavyeyi kapat
     Keyboard.dismiss();
   };
-
-  useEffect(async () => {
-    const user = auth.currentUser;
-    console.log("user", user);
-    console.log("gerçek user benim lan", user.email);
-
-    // const fetchData = async () => {
-    //   console.log("fetchData fonksiyonu çağrıldı.");
-    //   try {
-    //     console.log("fetchData");
-    //     const querySnapshot = await getDocs(projectRef);
-    //     console.log("querySnapshot", querySnapshot);
-    //     const data = [];
-    //     querySnapshot.forEach((doc) => {
-    //       data.push({ ...doc.data() });
-    //       console.log("docs", doc.data());
-    //     });
-    //     console.log("data", data);
-    //     setCards(data);
-    //   } catch (error) {
-    //     console.error("fetchData fonksiyonunda bir hata oluştu:", error);
-    //   }
-    // };
-    // fetchData();
-  }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -153,7 +165,7 @@ const UploadScreen = () => {
         {/* Resim yükleme alanı */}
         <TouchableOpacity
           style={styles.imageUploadButton}
-          onPress={() => console.log("Resim yükleme butonuna basıldı")}
+          onPress={handleImageUpload}
         >
           <Text style={styles.imageUploadButtonText}>Upload Project Image</Text>
         </TouchableOpacity>
