@@ -1,28 +1,36 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Text, Image, Dimensions, TouchableOpacity } from "react-native";
-// import Icon from 'react-native-vector-icons/FontAwesome'; //bunu kullanmak lazım butonlar için 
-import Swiper from 'react-native-deck-swiper';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
+// import Icon from 'react-native-vector-icons/FontAwesome'; //bunu kullanmak lazım butonlar için
+import Swiper from "react-native-deck-swiper";
+import { collection, doc, setDoc, getDoc, getDocs } from "firebase/firestore";
+import { FIREBASE_DB } from "../firebase";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
 const MainScreen = ({ navigation }) => {
-  const [cards, setCards] = useState([
-    {
-      id: "1",
-      name: "Mert",
-      age: 29,
-      bio: "Biraz sanat, biraz teknoloji...",
-      image: require("../assets/user1.png"),
-    },
-  ]);
+  const [cards, setCards] = useState([]);
+
+  const projectRef = collection(FIREBASE_DB, "project");
 
   const renderCard = (card, index) => {
+    console.log("card", card);
     return (
       <View key={index} style={styles.card}>
-        <Image source={card.image} style={styles.cardImage} />
         <View style={styles.textContainer}>
-          <Text style={styles.cardName}>{`${card.name}, ${card.age}`}</Text>
-          <Text style={styles.cardBio}>{card.bio}</Text>
+          <Text style={styles.cardName}>{`${card.name}`}</Text>
+          <Text>{`${card.description}`}</Text>
+          <Text >{`${card.category}`}</Text>
+          <Text >{`${card.budget}`}</Text>
+          <Text >{`${card.owner}`}</Text>
+          <Text >{`${card.photo}`}</Text>
+          <Text >{`${card.status}`}</Text>
         </View>
       </View>
     );
@@ -40,130 +48,148 @@ const MainScreen = ({ navigation }) => {
     console.log("Super Like", index);
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      console.log("fetchData fonksiyonu çağrıldı.");
+      try {
+        console.log("fetchData");
+        const querySnapshot = await getDocs(projectRef);
+        console.log("querySnapshot", querySnapshot);
+        const data = [];
+        querySnapshot.forEach((doc) => {
+          data.push({ ...doc.data() });
+          console.log("docs", doc.data());
+        });
+        console.log("data", data);
+        setCards(data);
+      } catch (error) {
+        console.error("fetchData fonksiyonunda bir hata oluştu:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <View style={styles.container}>
-        <Swiper
-          cards={cards}
-          renderCard={renderCard}
-          onSwipedLeft={handleDislike}
-          onSwipedRight={handleLike}
-          onSwipedTop={handleSuperLike}
-          stackSize={3}
-          backgroundColor={'transparent'}
-          cardIndex={0}
-          infinite
-          verticalSwipe={false}
-          containerStyle={styles.swiperContainer}
-          animateOverlayLabelsOpacity
-          overlayLabels={{
-            left: {
-              title: 'NOPE',
-              style: {
-                label: {
-                  backgroundColor: 'red',
-                  borderColor: 'red',
-                  color: 'white',
-                  borderWidth: 1
-                },
-                wrapper: {
-                  flexDirection: 'column',
-                  alignItems: 'flex-end',
-                  justifyContent: 'flex-start',
-                  marginTop: 20,
-                  marginLeft: -20
-                }
-              }
+      {cards.length > 0 && (
+      <Swiper
+        cards={cards}
+        renderCard={renderCard}
+        onSwipedLeft={handleDislike}
+        onSwipedRight={handleLike}
+        onSwipedTop={handleSuperLike}
+        stackSize={3}
+        backgroundColor={"transparent"}
+        cardIndex={0}
+        infinite
+        verticalSwipe={false}
+        containerStyle={styles.swiperContainer}
+        animateOverlayLabelsOpacity
+        overlayLabels={{
+          left: {
+            title: "NOPE",
+            style: {
+              label: {
+                backgroundColor: "red",
+                borderColor: "red",
+                color: "white",
+                borderWidth: 1,
+              },
+              wrapper: {
+                flexDirection: "column",
+                alignItems: "flex-end",
+                justifyContent: "flex-start",
+                marginTop: 20,
+                marginLeft: -20,
+              },
             },
-            right: {
-              title: 'LIKE',
-              style: {
-                label: {
-                  backgroundColor: 'green',
-                  borderColor: 'green',
-                  color: 'white',
-                  borderWidth: 1
-                },
-                wrapper: {
-                  flexDirection: 'column',
-                  alignItems: 'flex-start',
-                  justifyContent: 'flex-start',
-                  marginTop: 20,
-                  marginLeft: 20
-                }
-              }
+          },
+          right: {
+            title: "LIKE",
+            style: {
+              label: {
+                backgroundColor: "green",
+                borderColor: "green",
+                color: "white",
+                borderWidth: 1,
+              },
+              wrapper: {
+                flexDirection: "column",
+                alignItems: "flex-start",
+                justifyContent: "flex-start",
+                marginTop: 20,
+                marginLeft: 20,
+              },
             },
-            top: {
-              title: 'SUPER LIKE',
-              style: {
-                label: {
-                  backgroundColor: 'blue',
-                  borderColor: 'blue',
-                  color: 'white',
-                  borderWidth: 1
-                },
-                wrapper: {
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }
-              }
-            }
-          }}
-        />
-        {/* Eylem butonları */}
-      </View>
-    );
-  };
-  
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-    },
-    swiperContainer: {
-      alignItems: 'center',
-      marginTop: 50, // Üstten boşluk
-    },
-    card: {
-      width: width * 0.9, // Kartın genişliği ekran genişliğinin %90'ı kadar
-      height: height * 0.6, // Kartın yüksekliği ekran yüksekliğinin %60'ı kadar
-      borderRadius: 20,
-      shadowRadius: 25,
-      shadowColor: '#000',
-      shadowOpacity: 0.08,
-      shadowOffset: { width: 0, height: 0 },
-      backgroundColor: '#fff',
-      elevation: 1, // Android için gölge
-    },
-    cardImage: {
-      width: '100%',
-      height: '75%',
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
-    },
-    cardTextContainer: {
-      padding: 10,
-    },
-    cardName: {
-      fontSize: 24,
-      fontWeight: 'bold',
-    },
-    cardBio: {
-      fontSize: 16,
-      color: 'gray',
-    },
+          },
+          top: {
+            title: "SUPER LIKE",
+            style: {
+              label: {
+                backgroundColor: "blue",
+                borderColor: "blue",
+                color: "white",
+                borderWidth: 1,
+              },
+              wrapper: {
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+              },
+            },
+          },
+        }}
+      />
+      )}
+      {/* Eylem butonları */}
+    </View>
+  );
+};
 
-  });
-  
-  export default MainScreen;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  swiperContainer: {
+    alignItems: "center",
+    marginTop: 50, // Üstten boşluk
+  },
+  card: {
+    width: width * 0.9, // Kartın genişliği ekran genişliğinin %90'ı kadar
+    height: height * 0.7, // Kartın yüksekliği ekran yüksekliğinin %60'ı kadar
+    borderRadius: 20,
+    shadowRadius: 25,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowOffset: { width: 0, height: 0 },
+    backgroundColor: "#fff",
+    elevation: 1, // Android için gölge
+  },
+  cardImage: {
+    width: "100%",
+    height: "75%",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  cardTextContainer: {
+    padding: 10,
+  },
+  cardName: {
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  cardBio: {
+    fontSize: 16,
+    color: "gray",
+  },
+});
 
+export default MainScreen;
 
-  //aşağıda ki kod ilk hali çalıştırıp deneyebilirsiniz fakat kaydırma işlemi yok bunu işinize yaramazsa silin
+//aşağıda ki kod ilk hali çalıştırıp deneyebilirsiniz fakat kaydırma işlemi yok bunu işinize yaramazsa silin
 
-
-
-
-  // import React, { useState } from 'react';
+// import React, { useState } from 'react';
 // import { View, StyleSheet, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 // import Icon from 'react-native-vector-icons/FontAwesome';
 // import Swiper from 'react-native-deck-swiper';
@@ -215,7 +241,6 @@ const MainScreen = ({ navigation }) => {
 //   );
 // };
 
-
 // const styles = StyleSheet.create({
 //     container: {
 //       flex: 1, // Bileşenin ekranın tümünü kaplamasını sağlar
@@ -251,11 +276,9 @@ const MainScreen = ({ navigation }) => {
 //     },
 //     actionText: {
 //       fontSize: 18, // Buton yazı font büyüklüğü
-//       color: '#ff5252', 
-//       fontWeight: 'bold', 
+//       color: '#ff5252',
+//       fontWeight: 'bold',
 //     },
 //   });
 
 // export default MainScreen;
-
-

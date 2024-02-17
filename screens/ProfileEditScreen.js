@@ -9,7 +9,7 @@ const ProfileEditScreen = () => {
 
   const handleSave = () => {
     // Kullanıcı bilgilerini kaydetme işlemleri
-    console.log('Kaydedilen:', { name, age, bio });
+    console.log('Saved:', { name, age, bio });
   };
 
   return (

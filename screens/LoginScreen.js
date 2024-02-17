@@ -8,16 +8,23 @@ import {
   Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
 
 const LoginScreen = () => {
   const navigation = useNavigation();
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    // Burada giriş doğrulama işlemleri yapılacak
-    console.log("Giriş yapıldı:", username, password);
-    navigation.navigate('Main');
+  const handleLogin = async () => {
+    try{
+      const userCredential = await signInWithEmailAndPassword(auth,email, password);
+      const user = userCredential.user;
+      navigation.navigate("Main");
+    }
+    catch (error){
+      console.log("Error", error.message);
+    }
   };
 
   return (
@@ -28,30 +35,31 @@ const LoginScreen = () => {
 
       <TextInput
         style={styles.input}
-        placeholder="Kullanıcı Adı"
-        value={username}
-        onChangeText={setUsername}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
       />
       <TextInput
         style={styles.input}
-        placeholder="Şifre"
+        placeholder="Password"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
       />
 
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Giriş Yap</Text>
+        <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
 
       <TouchableOpacity>
-        <Text style={styles.forgotPasswordText}>Şifrenizi mi unuttunuz?</Text>
+        <Text style={styles.forgotPasswordText}>Forgot password?</Text>
       </TouchableOpacity>
 
       <View style={styles.registerContainer}>
-        <Text>Yeni kullanıcı mısınız? </Text>
+        <Text>Are you a new user? </Text>
         <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-          <Text style={styles.registerText}>Kayıt Ol</Text>
+          <Text style={styles.registerText}>Register</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -61,10 +69,10 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "flex-start", 
+    justifyContent: "flex-start",
     alignItems: "center",
     backgroundColor: "#eceff1",
-    paddingTop: 30, 
+    paddingTop: 30,
   },
   logoContainer: {
     marginBottom: 25,
@@ -72,22 +80,22 @@ const styles = StyleSheet.create({
   },
   logo: {
     marginTop: 50,
-    width: 150, 
-    height: 150, 
+    width: 150,
+    height: 150,
     resizeMode: "contain",
-    borderRadius: 75, 
+    borderRadius: 75,
   },
   input: {
     width: "80%",
-    height: 50, 
-    backgroundColor: "white", 
-    borderColor: "#ddd", 
+    height: 50,
+    backgroundColor: "white",
+    borderColor: "#ddd",
     borderWidth: 1,
     borderRadius: 25,
     marginBottom: 15,
     paddingLeft: 20,
-    fontSize: 16, 
-    shadowColor: "#000", 
+    fontSize: 16,
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -97,7 +105,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   button: {
-    backgroundColor: "#ff5252", 
+    backgroundColor: "#ff5252",
     width: "80%",
     padding: 10,
     borderRadius: 20,
@@ -109,7 +117,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   forgotPasswordText: {
-    color: "#ff5252", 
+    color: "#ff5252",
   },
   registerContainer: {
     flexDirection: "row",
