@@ -8,6 +8,7 @@ import {
   Image,
   ScrollView,
   Keyboard,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import RNPickerSelect from "react-native-picker-select";
@@ -17,7 +18,7 @@ import { FIREBASE_DB, storage } from "../firebase";
 import { auth } from "../firebase";
 import * as ImagePicker from "expo-image-picker";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-
+import {alert} from "react-native";
 const UploadScreen = () => {
   const navigation = useNavigation();
   const [projectName, setProjectName] = useState("");
@@ -97,11 +98,20 @@ const UploadScreen = () => {
         docData.owner = doc.data().name + " " + doc.data().surname;
       }
     });
-
-    await addDoc(collection(FIREBASE_DB, "project"), docData);
-
+    if(docData.name != "" && docData.description != "" && docData.category != "" && docData.budget != "" && docData.photo != "" && docData.status != "" && docData.entrepreneurId != "" && docData.owner != "") {
+      console.log("docData", docData);
+      await addDoc(collection(FIREBASE_DB, "project"), docData);
+    }else{
+      Alert.alert("Please fill in all fields");
+    }
     // Klavyeyi kapat
     Keyboard.dismiss();
+    setBudget("");
+    setCategory("");
+    setDescription("");
+    setProjectName("");
+    setStatus("");
+    setImage(null);
   };
 
   return (

@@ -7,16 +7,8 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
-// import Icon from 'react-native-vector-icons/FontAwesome'; //bunu kullanmak lazım butonlar için
 import Swiper from "react-native-deck-swiper";
-import {
-  collection,
-  doc,
-  setDoc,
-  getDoc,
-  getDocs,
-  addDoc,
-} from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { FIREBASE_DB } from "../firebase";
 import { auth } from "../firebase";
 
@@ -24,20 +16,73 @@ const { width, height } = Dimensions.get("window");
 
 const MainScreen = ({ navigation }) => {
   const [cards, setCards] = useState([]);
+  const [showNoProjectsMessage, setShowNoProjectsMessage] = useState(false);
   const investRef = collection(FIREBASE_DB, "invest");
   const user = auth.currentUser;
   const [investorId, setInvestorId] = useState("");
   const projectRef = collection(FIREBASE_DB, "project");
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const querySnapshot = await getDocs(projectRef);
+        const data = [];
+
+        for (const doc of querySnapshot.docs) {
+          const docData = doc.data();
+          docData.id = doc.id;
+
+          const k = query(
+            collection(FIREBASE_DB, "invest"),
+            where("projectId", "==", doc.id),
+            where("investorId", "==", user.uid)
+          );
+
+          const querySnapshott = await getDocs(k);
+          let projectFound = false;
+
+          for (const docK of querySnapshott.docs) {
+            if (docK.data().projectId === doc.id) {
+              projectFound = true;
+              break;
+            }
+          }
+
+          if (!projectFound) {
+            data.push({ ...docData });
+          }
+        }
+
+        setCards(data);
+
+        const querySnapshots = await getDocs(collection(FIREBASE_DB, "users"));
+        querySnapshots.forEach((doc) => {
+          if (doc.data().email.toLowerCase() === user.email) {
+            setInvestorId(doc.id);
+          }
+        });
+
+        if (data.length === 0) {
+          setShowNoProjectsMessage(true);
+        }
+      } catch (error) {
+        console.log("fetchData fonksiyonunda bir hata oluştu:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
   const renderCard = (card, index) => {
-    console.log("card", card);
+    if (!card || !card.description) {
+      return null; // Kart veya açıklama özelliği tanımsız ise, hiçbir şey döndürme
+    }
     const sentences = card.description
       .split(".")
       .filter((sentence) => sentence.trim() !== "");
 
     // İlk üç cümleyi al
     const truncatedDescription = sentences.slice(0, 3).join(". ") + ".";
-    console.log("truncatedDescription", truncatedDescription);
+
     return (
       <TouchableOpacity key={index} onPress={() => handleCardPress(card)}>
         <View style={styles.card}>
@@ -68,12 +113,9 @@ const MainScreen = ({ navigation }) => {
       investorId: investorId,
       liked: true,
     };
-    try {
-      await addDoc(collection(FIREBASE_DB, "invest"), docData);
-    } catch (error) {
-      console.log("An error occured while liking the card", error);
-    }
+    // Add like logic
   };
+
   const handleCardPress = (card) => {
     // Projeyi detaylar sayfasına yönlendir
     navigation.navigate("ProjectDetails", { card });
@@ -87,51 +129,20 @@ const MainScreen = ({ navigation }) => {
       investorId: investorId,
       liked: false,
     };
-
-    try {
-      await addDoc(collection(FIREBASE_DB, "invest"), docData);
-    } catch (error) {
-      console.log("An error occured while liking the card", error);
-    }
+    // Add dislike logic
   };
 
   const handleSuperLike = (index) => {
     console.log("Super Like", index);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        console.log("fetchData");
-        const querySnapshot = await getDocs(projectRef);
-        console.log("querySnapshot", querySnapshot);
-        const data = [];
-        querySnapshot.forEach((doc) => {
-          const docData = doc.data();
-          docData.id = doc.id;
-          data.push({ ...docData });
-          
-        });
-        console.log("data", data);
-
-        setCards(data);
-
-        const querySnapshots = await getDocs(collection(FIREBASE_DB, "users"));
-        querySnapshots.forEach((doc) => {
-          if (doc.data().email.toLowerCase() === user.email) {
-            setInvestorId(doc.id);
-          }
-        });
-      } catch (error) {
-        console.log("fetchData fonksiyonunda bir hata oluştu:", error);
-      }
-    };
-    fetchData();
-  }, []);
-
   return (
     <View style={styles.container}>
-      {cards.length > 0 && (
+      {showNoProjectsMessage ? (
+        <Text style={styles.noProjectsMessage}>
+          There are no projects to see. You finished them all :)
+        </Text>
+      ) : (
         <Swiper
           cards={cards}
           renderCard={renderCard}
@@ -141,7 +152,7 @@ const MainScreen = ({ navigation }) => {
           stackSize={3}
           backgroundColor={"transparent"}
           cardIndex={0}
-          infinite
+          infinite={false}
           verticalSwipe={false}
           containerStyle={styles.swiperContainer}
           animateOverlayLabelsOpacity
@@ -201,7 +212,6 @@ const MainScreen = ({ navigation }) => {
           }}
         />
       )}
-      {/* Eylem butonları */}
     </View>
   );
 };
@@ -213,19 +223,19 @@ const styles = StyleSheet.create({
   },
   swiperContainer: {
     alignItems: "center",
-    marginTop: 30, // Üstten boşluk
-    marginBottom: 30, // Altından boşluk
+    marginTop: 30,
+    marginBottom: 30,
   },
   card: {
-    width: width * 0.9, // Kartın genişliği ekran genişliğinin %90'ı kadar
-    height: height * 0.7, // Kartın yüksekliği ekran yüksekliğinin %60'ı kadar
+    width: width * 0.9,
+    height: height * 0.7,
     borderRadius: 20,
     shadowRadius: 25,
     shadowColor: "#000",
     shadowOpacity: 0.08,
     shadowOffset: { width: 0, height: 0 },
     backgroundColor: "#fff",
-    elevation: 1, // Android için gölge
+    elevation: 1,
   },
   cardImage: {
     width: "100%",
@@ -239,10 +249,6 @@ const styles = StyleSheet.create({
   cardName: {
     fontSize: 24,
     fontWeight: "bold",
-  },
-  cardBio: {
-    fontSize: 16,
-    color: "gray",
   },
   actionContainer: {
     flexDirection: "row",
@@ -267,6 +273,13 @@ const styles = StyleSheet.create({
   },
   likeButton: {
     backgroundColor: "#2196F3",
+  },
+  noProjectsMessage: {
+    textAlign: "center",
+    marginTop: 20,
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "gray",
   },
 });
 
