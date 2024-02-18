@@ -15,7 +15,7 @@ import { auth } from "../firebase";
 
 const { width, height } = Dimensions.get("window");
 
-const MainScreen = ({ navigation }) => {
+const MainScreen = ({ navigation }) => { 
   const [cards, setCards] = useState([]);
   const investRef = collection(FIREBASE_DB, "invest");
   const user = auth.currentUser;
@@ -25,24 +25,27 @@ const MainScreen = ({ navigation }) => {
   const renderCard = (card, index) => {
     console.log("card", card);
     return (
-      <View key={index} style={styles.card}>
-        <View style={styles.textContainer}>
-          <Text style={styles.cardName}>{`${card.name}`}</Text>
-          <Image
-            source={{
-              uri: card.photo,
-            }}
-            style={styles.cardImage}
-          />
-          <Text>{`${card.category}`}</Text>
-          <Text>{`${card.description}`}</Text>
-          <Text>{`${card.budget}`}</Text>
-          <Text>{`${card.owner}`}</Text>
-          <Text>{`${card.status}`}</Text>
+      <TouchableOpacity key={index} onPress={() => handleCardPress(card)}>
+        <View style={styles.card}>
+          <View style={styles.textContainer}>
+            <Text style={styles.cardName}>{`${card.name}`}</Text>
+            <Image
+              source={{
+                uri: card.photo,
+              }}
+              style={styles.cardImage}
+            />
+            <Text>{`${card.category}`}</Text>
+            <Text>{`${card.description}`}</Text>
+            <Text>{`${card.budget}`}</Text>
+            <Text>{`${card.owner}`}</Text>
+            <Text>{`${card.status}`}</Text>
+          </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
+
 
   const handleLike = async (index) => {
     const likedCard = cards[index];
@@ -58,6 +61,12 @@ const MainScreen = ({ navigation }) => {
       console.error("An error occured while liking the card", error);
     }
   };
+  const handleCardPress = (card) => {
+    // Projeyi detaylar sayfasına yönlendir
+    navigation.navigate('ProjectDetails', { card });
+  };
+
+
 
   const handleDislike = async (index) => {
     const likedCard = cards[index];
@@ -215,108 +224,36 @@ const styles = StyleSheet.create({
   },
   cardName: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   cardBio: {
     fontSize: 16,
-    color: "gray",
+    color: 'gray',
+  },
+  actionContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginBottom: 20,
+  },
+  actionButton: {
+    alignItems: 'center',
+    borderRadius: 5,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  actionText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  dislikeButton: {
+    backgroundColor: '#ff5252',
+  },
+  superLikeButton: {
+    backgroundColor: '#4CAF50',
+  },
+  likeButton: {
+    backgroundColor: '#2196F3',
   },
 });
 
 export default MainScreen;
-
-//aşağıda ki kod ilk hali çalıştırıp deneyebilirsiniz fakat kaydırma işlemi yok bunu işinize yaramazsa silin
-
-// import React, { useState } from 'react';
-// import { View, StyleSheet, Text, Image, TouchableOpacity, ScrollView } from "react-native";
-// import Icon from 'react-native-vector-icons/FontAwesome';
-// import Swiper from 'react-native-deck-swiper';
-// // import CustomTabBar from '../navigation/CustomTabBar';
-
-// const MainScreen = ({navigation}) => {
-
-//   const images = {
-//     user1: require("../assets/user1.png"),
-//   };
-//   const user = {
-//     name: "Mert",
-//     age: 29,
-//     bio: "Biraz sanat, biraz teknoloji...",
-//     image: "user1",
-//   };
-
-//   // Like, Dislike ve Super Like işlemleri için fonksiyonlar
-//   const handleLike = () => console.log("Like");
-//   const handleDislike = () => console.log("Dislike");
-//   const handleSuperLike = () => console.log("Super Like");
-
-//   return (
-//     <View style={styles.container}>
-//       <View style={styles.cardContainer}>
-//         <Image source={images[user.image]} style={styles.cardImage} />
-//         <Text style={styles.cardName}>{`${user.name}, ${user.age}`}</Text>
-//         <Text style={styles.cardBio}>{user.bio}</Text>
-//       </View>
-
-//       <View style={styles.actionContainer}>
-//         <TouchableOpacity onPress={handleDislike} style={styles.actionButton}>
-//           <Icon name="thumbs-down" size={30} color="#ff5252" />
-//           <Text style={styles.actionText}>Dislike</Text>
-//         </TouchableOpacity>
-
-//         <TouchableOpacity onPress={handleSuperLike} style={styles.actionButton}>
-//           <Icon name="star" size={30} color="#ff5252" />
-//           <Text style={styles.actionText}>Super Like</Text>
-//         </TouchableOpacity>
-
-//         <TouchableOpacity onPress={handleLike} style={styles.actionButton}>
-//           <Icon name="thumbs-up" size={30} color="#ff5252" />
-//           <Text style={styles.actionText}>Like</Text>
-//         </TouchableOpacity>
-//       </View>
-
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//     container: {
-//       flex: 1, // Bileşenin ekranın tümünü kaplamasını sağlar
-//       justifyContent: 'space-between', // Kart ve Tab Bar arasında boşluk bırakır
-//       backgroundColor: '#f8f9fa', // Arka plan rengi
-//     },
-//     cardContainer: {
-//       alignItems: 'center', // İçeriği ortalar
-//       marginTop: 50, // Üstten boşluk
-//     },
-//     cardImage: {
-//       width: '90%', // Resmin genişliği
-//       height: 300, // Resmin yüksekliği
-//       borderRadius: 20, // Resmin köşe yuvarlaklığı
-//     },
-//     cardName: {
-//       fontSize: 24, // İsim font büyüklüğü
-//       fontWeight: 'bold', // İsim font kalınlığı
-//       marginVertical: 10, // İsim etrafındaki dikey boşluk
-//     },
-//     cardBio: {
-//       fontSize: 16, // Biyografi font büyüklüğü
-//       color: 'gray', // Biyografi font rengi
-//       marginBottom: 20, // Biyografi altındaki boşluk
-//     },
-//     actionContainer: {
-//       flexDirection: 'row', // Butonları yanyana sıralar
-//       justifyContent: 'space-evenly', // Butonlar arasında eşit boşluk bırakır
-//       marginBottom: 20, // Altından boşluk
-//     },
-//     actionButton: {
-//       alignItems: 'center', // İçeriği ortalar
-//     },
-//     actionText: {
-//       fontSize: 18, // Buton yazı font büyüklüğü
-//       color: '#ff5252',
-//       fontWeight: 'bold',
-//     },
-//   });
-
-// export default MainScreen;
