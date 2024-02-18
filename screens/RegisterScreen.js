@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { auth } from "../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { collection, doc, setDoc, getDoc } from "firebase/firestore";
+import { collection, doc, setDoc, getDoc, addDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "../firebase";
 
 const RegisterScreen = ({ navigation }) => {
@@ -19,18 +19,9 @@ const RegisterScreen = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [surname, setSurname] = useState("");
   const [userType, setUserType] = useState("users");
-  const usersRef = collection(FIREBASE_DB, "users");
 
   const handleRegister = async () => {
     try {
-      await setDoc(doc(usersRef, email), {
-        name: name,
-        surname: surname,
-        email: email,
-        password: password,
-        userType: userType,
-      });
-
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -39,6 +30,14 @@ const RegisterScreen = ({ navigation }) => {
         surname
       );
       const user = userCredential.user;
+
+      await addDoc(collection(FIREBASE_DB, "users"), {
+        name: name,
+        surname: surname,
+        email: email,
+        password: password,
+        userType: userType,
+      });
 
       if (user) {
         if (userType === "investor") {

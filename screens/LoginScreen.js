@@ -10,7 +10,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
-import { collection, doc, setDoc, getDoc, getDocs } from "firebase/firestore";
+import { collection, doc, setDoc, getDoc, getDocs ,query,where} from "firebase/firestore";
 import { FIREBASE_DB } from "../firebase";
 
 const LoginScreen = () => {
@@ -28,17 +28,14 @@ const LoginScreen = () => {
       const user = userCredential.user;
 
       if (user) {
-        const docRef = doc(FIREBASE_DB, "users", email);
-        const docSnap = await getDoc(docRef);
+       // const docRef = collection(FIREBASE_DB, "users", email);
+        const q = query(collection(FIREBASE_DB, "users"), where("email", "==", email));
+        const docSnap = await getDocs(q);
+        console.log("docSnap", docSnap);
+        var User = docSnap.docs[0].data();
+        console.log("user", User);      
 
-        if (docSnap.exists()) {
-          console.log("Document data:", docSnap.data());
-        } else {
-          // docSnap.data() will be undefined in this case
-          console.log("No such document!");
-        }
-
-        if (docSnap.data().userType === "investor") {
+        if (docSnap.docs[0].data().userType === "investor") {
           navigation.navigate("Main");
         } else {
           navigation.navigate("Upload");

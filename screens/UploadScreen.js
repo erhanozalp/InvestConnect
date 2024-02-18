@@ -12,7 +12,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import RNPickerSelect from "react-native-picker-select";
 import Icon from "react-native-vector-icons/FontAwesome"; // Ikon kütüphanesi
-import { collection, doc, setDoc, getDoc, getDocs } from "firebase/firestore";
+import { collection, doc, setDoc, getDoc, getDocs, addDoc } from "firebase/firestore";
 import { FIREBASE_DB, storage } from "../firebase";
 import { auth } from "../firebase";
 import * as ImagePicker from "expo-image-picker";
@@ -63,6 +63,7 @@ const UploadScreen = () => {
   };
 
   const handleUpload = async () => {
+
     console.log(
       "Proje yüklendi:",
       projectName,
@@ -97,7 +98,7 @@ const UploadScreen = () => {
       }
     });
 
-    await setDoc(doc(FIREBASE_DB, "project", user.email), docData);
+    await addDoc(collection(FIREBASE_DB, "project"), docData);
 
     // Klavyeyi kapat
     Keyboard.dismiss();

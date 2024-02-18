@@ -9,14 +9,17 @@ import {
 } from "react-native";
 // import Icon from 'react-native-vector-icons/FontAwesome'; //bunu kullanmak lazım butonlar için
 import Swiper from "react-native-deck-swiper";
-import { collection, doc, setDoc, getDoc, getDocs } from "firebase/firestore";
+import { collection, doc, setDoc, getDoc, getDocs, addDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "../firebase";
+import { auth } from "../firebase";
 
 const { width, height } = Dimensions.get("window");
 
 const MainScreen = ({ navigation }) => {
   const [cards, setCards] = useState([]);
-
+  const investRef = collection(FIREBASE_DB, "invest");
+  const user = auth.currentUser;
+  const [investorId, setInvestorId] = useState("");
   const projectRef = collection(FIREBASE_DB, "project");
 
   const renderCard = (card, index) => {
@@ -41,12 +44,35 @@ const MainScreen = ({ navigation }) => {
     );
   };
 
-  const handleLike = (index) => {
-    console.log("Like", index);
+  const handleLike = async (index) => {
+    const likedCard = cards[index];
+
+    const docData = {
+      projectId: likedCard.entrepreneurId,
+      investorId: investorId,
+      liked: true,
+    };
+    try {
+      await addDoc(collection(FIREBASE_DB, "invest"), docData);
+      } catch (error) {
+      console.error("An error occured while liking the card", error);
+    }
   };
 
-  const handleDislike = (index) => {
-    console.log("Dislike", index);
+  const handleDislike = async (index) => {
+    const likedCard = cards[index];
+
+    const docData = {
+      projectId: likedCard.entrepreneurId,
+      investorId: investorId,
+      liked: false,
+    };
+
+    try {
+      await addDoc(collection(FIREBASE_DB, "invest"), docData);
+    } catch (error) {
+      console.error("An error occured while liking the card", error);
+    }
   };
 
   const handleSuperLike = (index) => {
@@ -55,7 +81,6 @@ const MainScreen = ({ navigation }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("fetchData fonksiyonu çağrıldı.");
       try {
         console.log("fetchData");
         const querySnapshot = await getDocs(projectRef);
@@ -67,6 +92,13 @@ const MainScreen = ({ navigation }) => {
         });
         console.log("data", data);
         setCards(data);
+
+        const querySnapshots = await getDocs(collection(FIREBASE_DB, "users"));
+        querySnapshots.forEach((doc) => {
+          if (doc.data().email.toLowerCase() === user.email) {
+            setInvestorId(doc.id);
+          }
+        });
       } catch (error) {
         console.error("fetchData fonksiyonunda bir hata oluştu:", error);
       }
@@ -158,7 +190,8 @@ const styles = StyleSheet.create({
   },
   swiperContainer: {
     alignItems: "center",
-    marginTop: 50, // Üstten boşluk
+    marginTop: 30, // Üstten boşluk
+    marginBottom: 30, // Altından boşluk
   },
   card: {
     width: width * 0.9, // Kartın genişliği ekran genişliğinin %90'ı kadar
