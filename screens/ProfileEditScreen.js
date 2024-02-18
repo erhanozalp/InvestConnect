@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 
-const ProfileEditScreen = () => {
+const ProfileEditScreen = ({ navigation }) => { // navigation prop'unu al
+
   const [name, setName] = useState('Mert');
   const [age, setAge] = useState('29');
   const [bio, setBio] = useState('Biraz sanat, biraz teknoloji...');
@@ -10,6 +11,11 @@ const ProfileEditScreen = () => {
   const handleSave = () => {
     // Kullanıcı bilgilerini kaydetme işlemleri
     console.log('Kaydedilen:', { name, age, bio });
+  };
+
+  const handleMyProjects = () => {
+    // MyProjects sayfasına yönlendirme işlemi
+    navigation.navigate('MyProjects');
   };
 
   return (
@@ -42,6 +48,10 @@ const ProfileEditScreen = () => {
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
         <Text style={styles.saveButtonText}>Kaydet</Text>
       </TouchableOpacity>
+      {/* My Projects butonu */}
+      <TouchableOpacity style={styles.myProjectsButton} onPress={handleMyProjects}>
+        <Text style={styles.myProjectsButtonText}>My Projects</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -52,6 +62,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f9fa',
   },
   imageContainer: {
+    marginTop:80,
     alignItems: 'center',
     marginVertical: 20,
   },
@@ -88,6 +99,20 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   saveButtonText: {
+    fontSize: 18,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  // My Projects butonu stilleri
+  myProjectsButton: {
+    backgroundColor: '#4CAF50',
+    borderRadius: 20,
+    marginHorizontal: 20,
+    marginTop: 20,
+    paddingVertical: 15,
+    alignItems: 'center',
+  },
+  myProjectsButtonText: {
     fontSize: 18,
     color: 'white',
     fontWeight: 'bold',

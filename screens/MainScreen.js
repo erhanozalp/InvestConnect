@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, Image, Dimensions, TouchableOpacity } from "react-native";
-// import Icon from 'react-native-vector-icons/FontAwesome'; //bunu kullanmak lazım butonlar için 
 import Swiper from 'react-native-deck-swiper';
 
 const { width, height } = Dimensions.get('window');
@@ -18,14 +17,21 @@ const MainScreen = ({ navigation }) => {
 
   const renderCard = (card, index) => {
     return (
-      <View key={index} style={styles.card}>
-        <Image source={card.image} style={styles.cardImage} />
-        <View style={styles.textContainer}>
-          <Text style={styles.cardName}>{`${card.name}, ${card.age}`}</Text>
-          <Text style={styles.cardBio}>{card.bio}</Text>
+      <TouchableOpacity key={index} onPress={() => handleCardPress(card)}>
+        <View style={styles.card}>
+          <Image source={card.image} style={styles.cardImage} />
+          <View style={styles.textContainer}>
+            <Text style={styles.cardName}>{`${card.name}, ${card.age}`}</Text>
+            <Text style={styles.cardBio}>{card.bio}</Text>
+          </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
+  };
+
+  const handleCardPress = (card) => {
+    // Projeyi detaylar sayfasına yönlendir
+    navigation.navigate('ProjectDetails', { card });
   };
 
   const handleLike = (index) => {
@@ -110,152 +116,72 @@ const MainScreen = ({ navigation }) => {
             }
           }}
         />
-        {/* Eylem butonları */}
-      </View>
-    );
-  };
-  
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-    },
-    swiperContainer: {
-      alignItems: 'center',
-      marginTop: 50, // Üstten boşluk
-    },
-    card: {
-      width: width * 0.9, // Kartın genişliği ekran genişliğinin %90'ı kadar
-      height: height * 0.6, // Kartın yüksekliği ekran yüksekliğinin %60'ı kadar
-      borderRadius: 20,
-      shadowRadius: 25,
-      shadowColor: '#000',
-      shadowOpacity: 0.08,
-      shadowOffset: { width: 0, height: 0 },
-      backgroundColor: '#fff',
-      elevation: 1, // Android için gölge
-    },
-    cardImage: {
-      width: '100%',
-      height: '75%',
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
-    },
-    cardTextContainer: {
-      padding: 10,
-    },
-    cardName: {
-      fontSize: 24,
-      fontWeight: 'bold',
-    },
-    cardBio: {
-      fontSize: 16,
-      color: 'gray',
-    },
+       
+    </View>
+  );
+};
 
-  });
-  
-  export default MainScreen;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  swiperContainer: {
+    alignItems: 'center',
+    marginTop: 50,
+  },
+  card: {
+    width: width * 0.9,
+    height: height * 0.6,
+    borderRadius: 20,
+    shadowRadius: 25,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowOffset: { width: 0, height: 0 },
+    backgroundColor: '#fff',
+    elevation: 1,
+  },
+  cardImage: {
+    width: '100%',
+    height: '75%',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  textContainer: {
+    padding: 10,
+  },
+  cardName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  cardBio: {
+    fontSize: 16,
+    color: 'gray',
+  },
+  actionContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginBottom: 20,
+  },
+  actionButton: {
+    alignItems: 'center',
+    borderRadius: 5,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  actionText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  dislikeButton: {
+    backgroundColor: '#ff5252',
+  },
+  superLikeButton: {
+    backgroundColor: '#4CAF50',
+  },
+  likeButton: {
+    backgroundColor: '#2196F3',
+  },
+});
 
-
-  //aşağıda ki kod ilk hali çalıştırıp deneyebilirsiniz fakat kaydırma işlemi yok bunu işinize yaramazsa silin
-
-
-
-
-  // import React, { useState } from 'react';
-// import { View, StyleSheet, Text, Image, TouchableOpacity, ScrollView } from "react-native";
-// import Icon from 'react-native-vector-icons/FontAwesome';
-// import Swiper from 'react-native-deck-swiper';
-// // import CustomTabBar from '../navigation/CustomTabBar';
-
-// const MainScreen = ({navigation}) => {
-
-//   const images = {
-//     user1: require("../assets/user1.png"),
-//   };
-//   const user = {
-//     name: "Mert",
-//     age: 29,
-//     bio: "Biraz sanat, biraz teknoloji...",
-//     image: "user1",
-//   };
-
-//   // Like, Dislike ve Super Like işlemleri için fonksiyonlar
-//   const handleLike = () => console.log("Like");
-//   const handleDislike = () => console.log("Dislike");
-//   const handleSuperLike = () => console.log("Super Like");
-
-//   return (
-//     <View style={styles.container}>
-//       <View style={styles.cardContainer}>
-//         <Image source={images[user.image]} style={styles.cardImage} />
-//         <Text style={styles.cardName}>{`${user.name}, ${user.age}`}</Text>
-//         <Text style={styles.cardBio}>{user.bio}</Text>
-//       </View>
-
-//       <View style={styles.actionContainer}>
-//         <TouchableOpacity onPress={handleDislike} style={styles.actionButton}>
-//           <Icon name="thumbs-down" size={30} color="#ff5252" />
-//           <Text style={styles.actionText}>Dislike</Text>
-//         </TouchableOpacity>
-
-//         <TouchableOpacity onPress={handleSuperLike} style={styles.actionButton}>
-//           <Icon name="star" size={30} color="#ff5252" />
-//           <Text style={styles.actionText}>Super Like</Text>
-//         </TouchableOpacity>
-
-//         <TouchableOpacity onPress={handleLike} style={styles.actionButton}>
-//           <Icon name="thumbs-up" size={30} color="#ff5252" />
-//           <Text style={styles.actionText}>Like</Text>
-//         </TouchableOpacity>
-//       </View>
-
-//     </View>
-//   );
-// };
-
-
-// const styles = StyleSheet.create({
-//     container: {
-//       flex: 1, // Bileşenin ekranın tümünü kaplamasını sağlar
-//       justifyContent: 'space-between', // Kart ve Tab Bar arasında boşluk bırakır
-//       backgroundColor: '#f8f9fa', // Arka plan rengi
-//     },
-//     cardContainer: {
-//       alignItems: 'center', // İçeriği ortalar
-//       marginTop: 50, // Üstten boşluk
-//     },
-//     cardImage: {
-//       width: '90%', // Resmin genişliği
-//       height: 300, // Resmin yüksekliği
-//       borderRadius: 20, // Resmin köşe yuvarlaklığı
-//     },
-//     cardName: {
-//       fontSize: 24, // İsim font büyüklüğü
-//       fontWeight: 'bold', // İsim font kalınlığı
-//       marginVertical: 10, // İsim etrafındaki dikey boşluk
-//     },
-//     cardBio: {
-//       fontSize: 16, // Biyografi font büyüklüğü
-//       color: 'gray', // Biyografi font rengi
-//       marginBottom: 20, // Biyografi altındaki boşluk
-//     },
-//     actionContainer: {
-//       flexDirection: 'row', // Butonları yanyana sıralar
-//       justifyContent: 'space-evenly', // Butonlar arasında eşit boşluk bırakır
-//       marginBottom: 20, // Altından boşluk
-//     },
-//     actionButton: {
-//       alignItems: 'center', // İçeriği ortalar
-//     },
-//     actionText: {
-//       fontSize: 18, // Buton yazı font büyüklüğü
-//       color: '#ff5252', 
-//       fontWeight: 'bold', 
-//     },
-//   });
-
-// export default MainScreen;
-
-
+export default MainScreen;

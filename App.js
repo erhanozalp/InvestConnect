@@ -12,6 +12,8 @@ import ChatScreen from "./screens/ChatScreen";
 import ChatListScreen from "./screens/ChatListScreen";
 import SearchScreen from './screens/SearchScreen';
 import UploadScreen from './screens/UploadScreen';
+import ProjectDetails from './screens/ProjectDetails';
+import MyProjects from './screens/MyProjects'; // MyProjects eklendi
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -62,9 +64,8 @@ function MainTabScreen() {
         component={MainScreen}
         options={{ headerShown: true, title: "Ana Sayfa" }} 
       />
-       <Tab.Screen name="Arama" component={SearchScreen}
-       options={{ headerShown: true, title: "Search" }}  />
-         <Tab.Screen
+      <Tab.Screen name="Arama" component={SearchScreen} options={{ headerShown: true, title: "Search" }} />
+      <Tab.Screen
         name="Yükle"
         component={UploadScreen}
         options={{ headerShown: true, title: "Yükle" }} 
@@ -79,9 +80,6 @@ function MainTabScreen() {
         component={ProfileEditScreen}
         options={{ headerShown: true, title: "Profilim" }} 
       />
-    
-      
-     
     </Tab.Navigator>
   );
 }
@@ -104,6 +102,21 @@ function App() {
           name="Main"
           component={MainTabScreen}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ProjectDetails"
+          component={ProjectDetails}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+  name="ProfileEdit"
+  component={ProfileEditScreen}
+  options={{ headerShown: false }}
+/>
+        <Stack.Screen
+          name="MyProjects" // MyProjects sayfasını ekledim
+          component={MyProjects} // MyProjects sayfasını ekledim
+          options={{ headerShown: false }} // MyProjects sayfasını ekledim
         />
       </Stack.Navigator>
     </NavigationContainer>
