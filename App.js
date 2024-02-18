@@ -14,6 +14,7 @@ import SearchScreen from './screens/SearchScreen';
 import UploadScreen from './screens/UploadScreen';
 import ProjectDetails from './screens/ProjectDetails';
 import MyProjects from './screens/MyProjects'; // MyProjects eklendi
+import LikedProjects from './screens/LikedProjects'; // LikedProjects eklendi
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -78,10 +79,16 @@ function MainTabScreen() {
         options={{ title: "Chat" }}
       />
       <Tab.Screen
+        name="Liked"
+        component={LikedProjects}
+        options={{ headerShown: true, title: "Liked Projects" }}
+      />
+      <Tab.Screen
         name="Profile"
         component={ProfileEditScreen}
         options={{ headerShown: true, title: "My Profile" }}
       />
+      
     </Tab.Navigator>
   );
 }

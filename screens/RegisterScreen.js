@@ -30,8 +30,8 @@ const RegisterScreen = ({ navigation }) => {
         surname
       );
       const user = userCredential.user;
-
-      await addDoc(collection(FIREBASE_DB, "users"), {
+        console.log("user", user);
+      await setDoc(doc(FIREBASE_DB, "users",user.uid), {
         name: name,
         surname: surname,
         email: email,

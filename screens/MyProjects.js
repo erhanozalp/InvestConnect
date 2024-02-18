@@ -2,6 +2,16 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Text, FlatList, TouchableOpacity, Image, Animated } from 'react-native';
 import logo from '../assets/image.png'; // Logo ekledim
 import { useNavigation } from "@react-navigation/native";
+import {
+  collection,
+  doc,
+  setDoc,
+  getDoc,
+  getDocs,
+  addDoc,
+} from "firebase/firestore";
+import { FIREBASE_DB } from "../firebase";
+import { auth } from "../firebase";
 
 const MyProjects = () => {
   const navigation = useNavigation();

@@ -29,6 +29,10 @@ const CustomTabBar = ({ navigation }) => {
         <Icon name="user" size={20} />
         <Text>Profil</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Liked')}>
+        <Icon name="liked" size={20} />
+        <Text>Liked</Text>
+      </TouchableOpacity>
     </View>
   );
 };

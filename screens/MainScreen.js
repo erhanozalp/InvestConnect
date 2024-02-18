@@ -9,13 +9,20 @@ import {
 } from "react-native";
 // import Icon from 'react-native-vector-icons/FontAwesome'; //bunu kullanmak lazım butonlar için
 import Swiper from "react-native-deck-swiper";
-import { collection, doc, setDoc, getDoc, getDocs, addDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  setDoc,
+  getDoc,
+  getDocs,
+  addDoc,
+} from "firebase/firestore";
 import { FIREBASE_DB } from "../firebase";
 import { auth } from "../firebase";
 
 const { width, height } = Dimensions.get("window");
 
-const MainScreen = ({ navigation }) => { 
+const MainScreen = ({ navigation }) => {
   const [cards, setCards] = useState([]);
   const investRef = collection(FIREBASE_DB, "invest");
   const user = auth.currentUser;
@@ -24,10 +31,17 @@ const MainScreen = ({ navigation }) => {
 
   const renderCard = (card, index) => {
     console.log("card", card);
+    const sentences = card.description
+      .split(".")
+      .filter((sentence) => sentence.trim() !== "");
+
+    // İlk üç cümleyi al
+    const truncatedDescription = sentences.slice(0, 3).join(". ") + ".";
+    console.log("truncatedDescription", truncatedDescription);
     return (
       <TouchableOpacity key={index} onPress={() => handleCardPress(card)}>
         <View style={styles.card}>
-          <View style={styles.textContainer}>
+          <View style={styles.cardTextContainer}>
             <Text style={styles.cardName}>{`${card.name}`}</Text>
             <Image
               source={{
@@ -36,7 +50,7 @@ const MainScreen = ({ navigation }) => {
               style={styles.cardImage}
             />
             <Text>{`${card.category}`}</Text>
-            <Text>{`${card.description}`}</Text>
+            <Text>{`${truncatedDescription}`}</Text>
             <Text>{`${card.budget}`}</Text>
             <Text>{`${card.owner}`}</Text>
             <Text>{`${card.status}`}</Text>
@@ -46,33 +60,30 @@ const MainScreen = ({ navigation }) => {
     );
   };
 
-
   const handleLike = async (index) => {
     const likedCard = cards[index];
 
     const docData = {
-      projectId: likedCard.entrepreneurId,
+      projectId: likedCard.id,
       investorId: investorId,
       liked: true,
     };
     try {
       await addDoc(collection(FIREBASE_DB, "invest"), docData);
-      } catch (error) {
-      console.error("An error occured while liking the card", error);
+    } catch (error) {
+      console.log("An error occured while liking the card", error);
     }
   };
   const handleCardPress = (card) => {
     // Projeyi detaylar sayfasına yönlendir
-    navigation.navigate('ProjectDetails', { card });
+    navigation.navigate("ProjectDetails", { card });
   };
-
-
 
   const handleDislike = async (index) => {
     const likedCard = cards[index];
 
     const docData = {
-      projectId: likedCard.entrepreneurId,
+      projectId: likedCard.id,
       investorId: investorId,
       liked: false,
     };
@@ -80,7 +91,7 @@ const MainScreen = ({ navigation }) => {
     try {
       await addDoc(collection(FIREBASE_DB, "invest"), docData);
     } catch (error) {
-      console.error("An error occured while liking the card", error);
+      console.log("An error occured while liking the card", error);
     }
   };
 
@@ -96,10 +107,13 @@ const MainScreen = ({ navigation }) => {
         console.log("querySnapshot", querySnapshot);
         const data = [];
         querySnapshot.forEach((doc) => {
-          data.push({ ...doc.data() });
-          console.log("docs", doc.data());
+          const docData = doc.data();
+          docData.id = doc.id;
+          data.push({ ...docData });
+          
         });
         console.log("data", data);
+
         setCards(data);
 
         const querySnapshots = await getDocs(collection(FIREBASE_DB, "users"));
@@ -109,7 +123,7 @@ const MainScreen = ({ navigation }) => {
           }
         });
       } catch (error) {
-        console.error("fetchData fonksiyonunda bir hata oluştu:", error);
+        console.log("fetchData fonksiyonunda bir hata oluştu:", error);
       }
     };
     fetchData();
@@ -224,35 +238,35 @@ const styles = StyleSheet.create({
   },
   cardName: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   cardBio: {
     fontSize: 16,
-    color: 'gray',
+    color: "gray",
   },
   actionContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    flexDirection: "row",
+    justifyContent: "space-evenly",
     marginBottom: 20,
   },
   actionButton: {
-    alignItems: 'center',
+    alignItems: "center",
     borderRadius: 5,
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
   actionText: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   dislikeButton: {
-    backgroundColor: '#ff5252',
+    backgroundColor: "#ff5252",
   },
   superLikeButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: "#4CAF50",
   },
   likeButton: {
-    backgroundColor: '#2196F3',
+    backgroundColor: "#2196F3",
   },
 });
 
