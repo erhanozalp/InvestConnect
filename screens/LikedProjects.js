@@ -17,6 +17,7 @@ import {
   getDoc,
   where,
   doc,
+  deleteDoc,
 } from "firebase/firestore";
 import { FIREBASE_DB } from "../firebase";
 import { auth } from "../firebase";
@@ -30,73 +31,85 @@ const MyProjects = () => {
   ]);
   const [project, setProject] = useState([]);
 
-  const handleDeleteProject = (projectId) => {
-    setProjects(projects.filter((project) => project.id !== projectId));
+  const handleDeleteProject = async (item) => {
+    console.log("handleDeleteProject", item.id);
+    const q = query(collection(FIREBASE_DB, "invest"), where("projectId", "==", item.id));
+    const querySnapshot = await getDocs(q);
+    const promises = querySnapshot.docs.map(async (docX) => {
+      await deleteDoc(doc(FIREBASE_DB, "invest", docX.id));
+    });
+    await Promise.all(promises);
+    await fetchData();
   };
 
   const renderProjectItem = ({ item }) => {
     return (
-      <ProjectItem item={item} handleDeleteProject={handleDeleteProject} />
+      <ProjectItem item={item} handleDeleteProject={handleDeleteProject} onPress={() => navigateToProjectDetails(item)}/>
     );
+  };
+
+  const navigateToProjectDetails = (card) => {
+    navigation.navigate("ProjectDetails",{card}); // ProjectDetails'e gitmek için gerekli navigasyon kodu
   };
 
   const navigateToProfileEdit = () => {
     navigation.navigate("ProfileEdit");
   };
 
+  const user = auth.currentUser;
+  const fetchData = async () => {
+    try {
+      console.log("fetchData");
+      const q = query(
+        collection(FIREBASE_DB, "invest"),
+        where("investorId", "==", user.uid),
+        where("liked", "==", true)
+      );
+      const dataa = [];
+
+      const querySnapshot = await getDocs(q);
+      const promises = querySnapshot.docs.map(async (docX) => {
+        console.log("doc", docX.data().projectId);
+        // doc.data() is never undefined for query doc snapshots
+        const k = doc(FIREBASE_DB, "project", docX.data().projectId);
+        const data = await getDoc(k);
+        console.log("data: ", data.data());
+        dataa.push({ ...data.data(), id: data.id });
+      });
+      await Promise.all(promises);
+
+      setProject(dataa);
+      console.log("gelen true projeler: ", project);
+    } catch (error) {
+      console.log("fetchData fonksiyonunda bir hata oluştu:", error);
+    }
+  };
+
   useEffect(() => {
-    const user = auth.currentUser;
-    const fetchData = async () => {
-      try {
-        console.log("fetchData");
-        const q = query(
-          collection(FIREBASE_DB, "invest"),
-          where("investorId", "==", user.uid),
-          where("liked", "==", true)
-        );
-        const dataa = [];
-
-        const querySnapshot = await getDocs(q);
-        const promises = querySnapshot.docs.map(async (docX) => {
-          console.log("doc", docX.data().projectId);
-          // doc.data() is never undefined for query doc snapshots
-          const k = doc(FIREBASE_DB, "project", docX.data().projectId);
-          const data = await getDoc(k);
-          console.log("data: ", data.data());
-          dataa.push({ ...data.data() });
-        });
-        await Promise.all(promises);
-
-        setProject(dataa);
-        console.log("gelen true projeler: ", project);
-      } catch (error) {
-        console.log("fetchData fonksiyonunda bir hata oluştu:", error);
-      }
-    };
+   
     fetchData();
   }, []);
+  const handleCardPress = (card) => {
+    // Projeyi detaylar sayfasına yönlendir
+    navigation.navigate("ProjectDetails", { card });
+  };
 
   return (
     <View style={styles.container}>
       <Image source={logo} style={styles.logo} />
-      <Text style={styles.title}>Projelerim</Text>
+      <Text style={styles.title}>Liked Projects</Text>
       <FlatList
         data={project}
         renderItem={renderProjectItem}
         keyExtractor={(item) => item.id}
+        onPress ={() => handleCardPress(item) }
         style={styles.projectList}
       />
-      <TouchableOpacity
-        style={styles.profileEditButton}
-        onPress={navigateToProfileEdit}
-      >
-        <Text style={styles.profileEditText}>Profil Dön</Text>
-      </TouchableOpacity>
     </View>
   );
 };
 
-const ProjectItem = ({ item, handleDeleteProject }) => {
+const ProjectItem = ({ item, handleDeleteProject, onPress }) => {
   const swipeX = React.useRef(new Animated.Value(0)).current;
 
   const handleSwipe = () => {
@@ -104,7 +117,7 @@ const ProjectItem = ({ item, handleDeleteProject }) => {
       toValue: -100,
       duration: 200,
       useNativeDriver: false,
-    }).start(() => handleDeleteProject(item.id));
+    }).start(() => handleDeleteProject(item));
   };
 
   return (
@@ -112,15 +125,16 @@ const ProjectItem = ({ item, handleDeleteProject }) => {
       style={[styles.projectContainer, { transform: [{ translateX: swipeX }] }]}
     >
       <TouchableOpacity style={styles.deleteAction} onPress={handleSwipe}>
-        <Text style={styles.deleteText}>Sil</Text>
+        <Text style={styles.deleteText}>Delete</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.projectTouchable}>
+      <TouchableOpacity style={styles.projectTouchable} onPress={onPress}>
         <Text style={styles.projectName}>{item.name}</Text>
         <Text style={styles.projectDescription}>{item.description}</Text>
       </TouchableOpacity>
     </Animated.View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {

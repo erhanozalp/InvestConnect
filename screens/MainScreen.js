@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import Swiper from "react-native-deck-swiper";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where, addDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "../firebase";
 import { auth } from "../firebase";
 
@@ -28,13 +28,13 @@ const MainScreen = ({ navigation }) => {
         const querySnapshot = await getDocs(projectRef);
         const data = [];
 
+      
         for (const doc of querySnapshot.docs) {
           const docData = doc.data();
           docData.id = doc.id;
 
           const k = query(
             collection(FIREBASE_DB, "invest"),
-            where("projectId", "==", doc.id),
             where("investorId", "==", user.uid)
           );
 
@@ -45,12 +45,15 @@ const MainScreen = ({ navigation }) => {
             if (docK.data().projectId === doc.id) {
               projectFound = true;
               break;
+              
             }
           }
 
-          if (!projectFound) {
+          if(projectFound !== true){
+            console.log("docdata: ", docData)
             data.push({ ...docData });
           }
+        
         }
 
         setCards(data);
@@ -114,6 +117,11 @@ const MainScreen = ({ navigation }) => {
       liked: true,
     };
     // Add like logic
+    try {
+      await addDoc(collection(FIREBASE_DB, "invest"), docData);
+    } catch (error) {
+      console.error("An error occured while liking the card", error);
+    }
   };
 
   const handleCardPress = (card) => {
@@ -130,6 +138,11 @@ const MainScreen = ({ navigation }) => {
       liked: false,
     };
     // Add dislike logic
+    try {
+      await addDoc(collection(FIREBASE_DB, "invest"), docData);
+    } catch (error) {
+      console.error("An error occured while disliking the card", error);
+    }
   };
 
   const handleSuperLike = (index) => {

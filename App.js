@@ -74,6 +74,8 @@ function MainTabScreen() {
             iconName = "search";
           } else if (route.name === "Upload") {
             iconName = "upload";
+          } else if (route.name === "Liked"){
+            iconName = "heart";
           }
           return <Icon name={iconName} size={size} color={color} />;
         },
@@ -156,6 +158,8 @@ function UploadTabScreen() {
             iconName = "search";
           } else if (route.name === "Upload") {
             iconName = "upload";
+          } else if(route.name === "Projects"){
+            iconName = "book"
           }
           return <Icon name={iconName} size={size} color={color} />;
         },
@@ -202,6 +206,11 @@ function UploadTabScreen() {
         component={ProfileEditScreen}
         options={{ headerShown: true, title: "My Profile" }}
       />
+      <Tab.Screen
+        name="Projects"
+        component={MyProjects}
+        options={{ headerShown: true, title: "My Project"}}
+        />
     </Tab.Navigator>
   );
 }

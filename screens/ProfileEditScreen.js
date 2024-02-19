@@ -1,12 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { collection, getDoc, query, where, addDoc, doc } from "firebase/firestore";
+import { FIREBASE_DB } from "../firebase";
+import { auth } from "../firebase";
 
 const ProfileEditScreen = ({ navigation }) => { // navigation prop'unu al
 
   const [name, setName] = useState('Mert');
-  const [age, setAge] = useState('29');
-  const [bio, setBio] = useState('Biraz sanat, biraz teknoloji...');
+  const [surname, setSurname] = useState('29');
+  const [email, setEmail] = useState('Biraz sanat, biraz teknoloji...');
   const [profileImage, setProfileImage] = useState(require('../assets/user2.png')); 
+  const user = auth.currentUser;
+  const [User, setUser] = useState([]);
 
   const handleSave = () => {
     // Kullanıcı bilgilerini kaydetme işlemleri
@@ -18,43 +23,37 @@ const ProfileEditScreen = ({ navigation }) => { // navigation prop'unu al
     navigation.navigate('MyProjects');
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+
+        const docSnap = await getDoc(doc(FIREBASE_DB, "users", user.uid));
+        setUser(docSnap.data());
+
+      }catch(error){
+        console.log("Error in fetchData", error)
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.imageContainer}>
         <Image source={profileImage} style={styles.profileImage} />
       </View>
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Ad</Text>
-        <TextInput
-          style={styles.input}
-          value={name}
-          onChangeText={setName}
-        />
-        <Text style={styles.label}>Yaş</Text>
-        <TextInput
-          style={styles.input}
-          value={age}
-          onChangeText={setAge}
-          keyboardType='numeric'
-        />
-        <Text style={styles.label}>Biyografi</Text>
-        <TextInput
-          style={styles.input}
-          value={bio}
-          onChangeText={setBio}
-          multiline
-        />
-      </View>
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveButtonText}>Kaydet</Text>
-      </TouchableOpacity>
-      {/* My Projects butonu */}
-      <TouchableOpacity style={styles.myProjectsButton} onPress={handleMyProjects}>
-        <Text style={styles.myProjectsButtonText}>My Projects</Text>
-      </TouchableOpacity>
+        <Text style={styles.label}>{User.name}</Text>
+        
+        <Text style={styles.label}>{User.surname}</Text>
+       
+        <Text style={styles.label}>{User.email}</Text>
+      </View>     
     </ScrollView>
   );
 };
+
+
 
 const styles = StyleSheet.create({
   container: {

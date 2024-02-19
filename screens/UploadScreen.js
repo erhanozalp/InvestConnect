@@ -149,11 +149,16 @@ const UploadScreen = () => {
               onValueChange={(value) => setCategory(value)}
               placeholder={{ label: "Select Category", value: null }}
               items={[
-                { label: "Kategori 1", value: "category1" },
-                { label: "Kategori 2", value: "category2" },
-                { label: "Kategori 3", value: "category3" },
-                { label: "Kategori 4", value: "category4" },
-                { label: "Kategori 5", value: "category5" },
+                { label: "Information Technology", value: "Information Technology" },
+                { label: "Health and Medical Technologies", value: "Health and Medical Technologies" },
+                { label: "Green Energy and Environmental Technologies", value: "Green Energy and Environmental Technologies" },
+                { label: "Educational Technologies", value: "Educational Technologies" },
+                { label: "Agricultural Technologies", value: "Agricultural Technologies" },
+                { label: "Financial Technologies (Fintech)", value: "Financial Technologies (Fintech)" },
+                { label: "Social Innovation and Sustainable Development", value: "Social Innovation and Sustainable Development" },
+                { label: "Automation and Robotics", value: "Automation and Robotics" },
+                { label: "Virtual and Augmented Reality", value: "Virtual and Augmented Reality" },
+                { label: "Mobile and Internet Services", value: "Mobile and Internet Services" },
               ]}
               Icon={() => {
                 return <Icon name="caret-down" size={24} color="gray" />;

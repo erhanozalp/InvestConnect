@@ -40,8 +40,12 @@ const MyProjects = () => {
 
   const renderProjectItem = ({ item }) => {
     return (
-      <ProjectItem item={item} handleDeleteProject={handleDeleteProject} />
+      <ProjectItem item={item} handleDeleteProject={handleDeleteProject} onPress={() => navigateToProjectDetails(item)}/>
     );
+  };
+
+  const navigateToProjectDetails = (card) => {
+    navigation.navigate("ProjectDetails",{card}); // ProjectDetails'e gitmek için gerekli navigasyon kodu
   };
 
   const navigateToProfileEdit = () => {
@@ -77,24 +81,19 @@ const MyProjects = () => {
   return (
     <View style={styles.container}>
       <Image source={logo} style={styles.logo} />
-      <Text style={styles.title}>Projelerim</Text>
+      <Text style={styles.title}>My Projects</Text>
       <FlatList
         data={project}
         renderItem={renderProjectItem}
         keyExtractor={(item) => item.id}
+        onPress ={() => handleCardPress(item) }
         style={styles.projectList}
       />
-      <TouchableOpacity
-        style={styles.profileEditButton}
-        onPress={navigateToProfileEdit}
-      >
-        <Text style={styles.profileEditText}>Profil Dön</Text>
-      </TouchableOpacity>
     </View>
   );
 };
 
-const ProjectItem = ({ item, handleDeleteProject }) => {
+const ProjectItem = ({ item, handleDeleteProject, onPress }) => {
   const swipeX = React.useRef(new Animated.Value(0)).current;
 
   const handleSwipe = () => {
@@ -112,7 +111,7 @@ const ProjectItem = ({ item, handleDeleteProject }) => {
       <TouchableOpacity style={styles.deleteAction} onPress={handleSwipe}>
         <Text style={styles.deleteText}>Delete</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.projectTouchable}>
+      <TouchableOpacity style={styles.projectTouchable} onPress={onPress}>
         <Text style={styles.projectName}>{item.name}</Text>
         <Text style={styles.projectDescription}>{item.description}</Text>
       </TouchableOpacity>
