@@ -1,6 +1,16 @@
 import React from "react";
-import { View, StyleSheet, Text, Image, TouchableOpacity, ScrollView } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { collection, getDoc, query, where, addDoc,doc } from "firebase/firestore";
+import { FIREBASE_DB } from "../firebase";
+import { auth } from "../firebase";
 
 const ProjectDetails = ({ route }) => {
   const { card } = route.params;
@@ -8,6 +18,13 @@ const ProjectDetails = ({ route }) => {
 
   const handleGoBack = () => {
     navigation.goBack();
+  };
+
+  const handleChat = async () => {
+    const q = await getDoc(doc(FIREBASE_DB, "users", card.entrepreneurId));
+    console.log("q: ", q.data().email)
+
+    navigation.navigate("ChatList", { email: q.data().email });
   };
 
   return (
@@ -21,7 +38,10 @@ const ProjectDetails = ({ route }) => {
         {/* Buraya başka detay bilgileri de eklenebilir */}
       </View>
       <TouchableOpacity style={styles.goBackButton} onPress={handleGoBack}>
-        <Text style={styles.goBackText}>Geri Dön</Text>
+        <Text style={styles.goBackText}>Go Back</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.goBackButton} onPress={handleChat}>
+        <Text style={styles.goBackText}>Chat With Project Owner</Text>
       </TouchableOpacity>
     </View>
   );

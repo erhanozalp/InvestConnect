@@ -16,8 +16,8 @@ import ChatListScreen from "./screens/ChatListScreen";
 import SearchScreen from "./screens/SearchScreen";
 import UploadScreen from "./screens/UploadScreen";
 import ProjectDetails from "./screens/ProjectDetails";
-import MyProjects from "./screens/MyProjects"; // MyProjects eklendi
-import LikedProjects from "./screens/LikedProjects"; // LikedProjects eklendi
+import MyProjects from "./screens/MyProjects";
+import LikedProjects from "./screens/LikedProjects";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -53,8 +53,8 @@ function MainTabScreen() {
 
     fetchUser();
   }, []);
+
   if (!user || !user.userType) {
-    // Kullanıcı tanımlı değilse veya kullanıcı türü belirlenemiyorsa, yükleme durumunu göster
     return null;
   }
 
@@ -74,9 +74,10 @@ function MainTabScreen() {
             iconName = "search";
           } else if (route.name === "Upload") {
             iconName = "upload";
-          } else if (route.name === "Liked"){
+          } else if (route.name === "Liked") {
             iconName = "heart";
           }
+
           return <Icon name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: "tomato",
@@ -91,7 +92,6 @@ function MainTabScreen() {
           options={{ headerShown: true, title: "Main Screen" }}
         />
       )}
-      
       {user.userType === "entrepreneur" && (
         <Tab.Screen
           name="Upload"
@@ -131,8 +131,8 @@ function UploadTabScreen() {
 
     fetchUser();
   }, []);
+
   if (!user || !user.userType) {
-    // Kullanıcı tanımlı değilse veya kullanıcı türü belirlenemiyorsa, yükleme durumunu göster
     return null;
   }
 
@@ -148,12 +148,12 @@ function UploadTabScreen() {
             iconName = "user";
           } else if (route.name === "Chat") {
             iconName = "comments";
-          
           } else if (route.name === "Upload") {
             iconName = "upload";
-          } else if(route.name === "Projects"){
-            iconName = "book"
+          } else if (route.name === "Projects") {
+            iconName = "book";
           }
+
           return <Icon name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: "tomato",
@@ -168,7 +168,6 @@ function UploadTabScreen() {
           options={{ headerShown: true, title: "Main Screen" }}
         />
       )}
-     
       {user.userType === "entrepreneur" && (
         <Tab.Screen
           name="Upload"
@@ -187,24 +186,22 @@ function UploadTabScreen() {
           component={LikedProjects}
           options={{ headerShown: true, title: "Liked Projects" }}
         />
-      )} <Tab.Screen
+      )}
+      <Tab.Screen
         name="Projects"
         component={MyProjects}
-        options={{ headerShown: true, title: "My Project"}}
-        />
+        options={{ headerShown: true, title: "My Project" }}
+      />
       <Tab.Screen
         name="Profile"
         component={ProfileEditScreen}
         options={{ headerShown: true, title: "My Profile" }}
       />
-     
     </Tab.Navigator>
   );
 }
 
 function App() {
-  const user = getCurrentUser();
-
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -239,9 +236,14 @@ function App() {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="MyProjects" // MyProjects sayfasını ekledim
-          component={MyProjects} // MyProjects sayfasını ekledim
-          options={{ headerShown: false }} // MyProjects sayfasını ekledim
+          name="MyProjects"
+          component={MyProjects}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ChatList"
+          component={ChatListScreen}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -12,15 +12,17 @@ import {
   orderBy,
   query,
   onSnapshot,
+  where,
 } from "firebase/firestore";
 import { auth, FIREBASE_DB } from "../firebase";
 import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import colors from "../colors";
 
-export default function Chat() {
+export default function Chat({ route }) {
   const [messages, setMessages] = useState([]);
   const navigation = useNavigation();
+  const { email } = route.params;
 
   const onSignOut = () => {
     signOut(auth).catch((error) => console.log("Error logging out: ", error));
@@ -47,21 +49,46 @@ export default function Chat() {
   }, [navigation]);
 
   useLayoutEffect(() => {
-    const collectionRef = collection(FIREBASE_DB, "chats");
-    const q = query(collectionRef, orderBy("createdAt", "desc"));
+    const MessagesQuery = query(
+      collection(FIREBASE_DB, "chats"),
+      where("user._id", "==", auth?.currentUser?.email)
+    );
 
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      console.log("querySnapshot unsusbscribe");
-      setMessages(
-        querySnapshot.docs.map((doc) => ({
-          _id: doc.data()._id,
-          createdAt: doc.data().createdAt.toDate(),
-          text: doc.data().text,
-          user: doc.data().user,
-        }))
-      );
+    const Messages2Query = query(
+      collection(FIREBASE_DB, "chats"),
+      where("user._id", "==", email.toLowerCase())
+    );
+    console.log("MessagesQuery", MessagesQuery);
+
+    const unsubscribe = onSnapshot(MessagesQuery, (querySnapshot) => {
+      const messages1 = querySnapshot.docs.map((doc) => ({
+        _id: doc.data()._id,
+        createdAt: doc.data().createdAt.toDate(),
+        text: doc.data().text,
+        user: doc.data().user,
+      }));
+
+      const mergedMessages = [...messages1];
+      setMessages(mergedMessages);
     });
-    return unsubscribe;
+
+    const unsubscribe2 = onSnapshot(Messages2Query, (querySnapshot) => {
+      const messages2 = querySnapshot.docs.map((doc) => ({
+        _id: doc.data()._id,
+        createdAt: doc.data().createdAt.toDate(),
+        text: doc.data().text,
+        user: doc.data().user,
+      }));
+      const mergedMessages = [...messages2];
+      setMessages((prevMessages) => [...prevMessages, ...mergedMessages]);
+    });
+    console.log("messages", messages);
+    const unsubscribeAll = () => {
+      unsubscribe();
+      unsubscribe2();
+    };
+
+    return unsubscribeAll;
   }, []);
 
   const onSend = useCallback((messages = []) => {
@@ -69,6 +96,7 @@ export default function Chat() {
       GiftedChat.append(previousMessages, messages)
     );
     // setMessages([...messages, ...messages]);
+    console.log("asdas", messages[0]);
     const { _id, createdAt, text, user } = messages[0];
     addDoc(collection(FIREBASE_DB, "chats"), {
       _id,
