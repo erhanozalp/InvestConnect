@@ -4,33 +4,28 @@ import { collection, getDoc, query, where, addDoc, doc } from "firebase/firestor
 import { FIREBASE_DB } from "../firebase";
 import { auth } from "../firebase";
 
-const ProfileEditScreen = ({ navigation }) => { // navigation prop'unu al
-
-  const [name, setName] = useState('Mert');
-  const [surname, setSurname] = useState('29');
-  const [email, setEmail] = useState('Biraz sanat, biraz teknoloji...');
+const ProfileEditScreen = ({ navigation }) => {
+  const [name, setName] = useState('');
+  const [surname, setSurname] = useState('');
+  const [email, setEmail] = useState('');
   const [profileImage, setProfileImage] = useState(require('../assets/user2.png')); 
   const user = auth.currentUser;
-  const [User, setUser] = useState([]);
+  const [User, setUser] = useState(null);
 
   const handleSave = () => {
-    // Kullanıcı bilgilerini kaydetme işlemleri
-    console.log('Saved:', { name, age, bio });
+    console.log('Saved:', { name, surname, email });
   };
 
   const handleMyProjects = () => {
-    // MyProjects sayfasına yönlendirme işlemi
     navigation.navigate('MyProjects');
   };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-
         const docSnap = await getDoc(doc(FIREBASE_DB, "users", user.uid));
         setUser(docSnap.data());
-
-      }catch(error){
+      } catch(error) {
         console.log("Error in fetchData", error)
       }
     };
@@ -43,17 +38,32 @@ const ProfileEditScreen = ({ navigation }) => { // navigation prop'unu al
         <Image source={profileImage} style={styles.profileImage} />
       </View>
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>{User.name}</Text>
+        <Text style={styles.label}>Name:</Text>
+        <TextInput
+          style={styles.input}
+          value={User ? User.name : ''}
+          editable={false} // Make input read-only
+        />
         
-        <Text style={styles.label}>{User.surname}</Text>
+        <Text style={styles.label}>Surname:</Text>
+        <TextInput
+          style={styles.input}
+          value={User ? User.surname : ''}
+          editable={false} // Make input read-only
+        />
        
-        <Text style={styles.label}>{User.email}</Text>
-      </View>     
+        <Text style={styles.label}>Email:</Text>
+        <TextInput
+          style={styles.input}
+          value={User ? User.email : ''}
+          editable={false} // Make input read-only
+        />
+      </View>
+      
+      
     </ScrollView>
   );
 };
-
-
 
 const styles = StyleSheet.create({
   container: {
@@ -61,7 +71,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f9fa',
   },
   imageContainer: {
-    marginTop:80,
+    marginTop: 80,
     alignItems: 'center',
     marginVertical: 20,
   },
@@ -79,7 +89,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   input: {
-    backgroundColor: 'white',
+    backgroundColor: '#f0f0f0', // Change input background color to distinguish it from editable inputs
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,
@@ -101,21 +111,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
     fontWeight: 'bold',
-  },
-  // My Projects butonu stilleri
-  myProjectsButton: {
-    backgroundColor: '#4CAF50',
-    borderRadius: 20,
-    marginHorizontal: 20,
-    marginTop: 20,
-    paddingVertical: 15,
-    alignItems: 'center',
-  },
-  myProjectsButtonText: {
-    fontSize: 18,
-    color: 'white',
-    fontWeight: 'bold',
-  },
+  }
 });
 
 export default ProfileEditScreen;

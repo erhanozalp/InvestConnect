@@ -34,15 +34,7 @@ const CustomTabBar = ({ navigation }) => {
           <Text>Ana Sayfa</Text>
         </TouchableOpacity>
       )}
-      {userType === "investor" && (
-        <TouchableOpacity
-          style={styles.tabItem}
-          onPress={() => navigation.navigate("Search")}
-        >
-          <Icon name="search" size={20} />
-          <Text>Arama</Text>
-        </TouchableOpacity>
-      )}
+      
       {userType === "entrepreneur" && (
         <TouchableOpacity
           style={styles.tabItem}

@@ -1,16 +1,8 @@
 import React from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { View, StyleSheet, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 const ProjectDetails = ({ route }) => {
-  // MainScreen'den gelen parametreleri al
   const { card } = route.params;
   const navigation = useNavigation();
 
@@ -21,30 +13,16 @@ const ProjectDetails = ({ route }) => {
   return (
     <View style={styles.container}>
       <Image source={card.image} style={styles.cardImage} />
-      <View>
-        <Text>{`${card.name}`}</Text>
-        <ScrollView>
-          <Text>{`${card.description}`}</Text>
+      <View style={styles.detailsContainer}>
+        <Text style={styles.cardName}>{card.name}</Text>
+        <ScrollView style={styles.descriptionContainer}>
+          <Text style={styles.cardDescription}>{card.description}</Text>
         </ScrollView>
         {/* Buraya başka detay bilgileri de eklenebilir */}
       </View>
       <TouchableOpacity style={styles.goBackButton} onPress={handleGoBack}>
         <Text style={styles.goBackText}>Geri Dön</Text>
       </TouchableOpacity>
-
-      {/* Tüm özellikleri bunlar 
-      
-            <Image
-              source={{
-                uri: card.photo,
-              }}
-              style={styles.cardImage}
-            />
-            <Text>{`${card.category}`}</Text>
-            <Text>{`${truncatedDescription}`}</Text>
-            <Text>{`${card.budget}`}</Text>
-            <Text>{`${card.owner}`}</Text>
-            <Text>{`${card.status}`}</Text> */}
     </View>
   );
 };
@@ -53,7 +31,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
     backgroundColor: "#fff",
   },
   cardImage: {
@@ -62,7 +39,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginBottom: 20,
   },
-  textContainer: {
+  detailsContainer: {
+    paddingHorizontal: 20,
     alignItems: "center",
   },
   cardName: {
@@ -70,7 +48,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
   },
-  cardBio: {
+  descriptionContainer: {
+    maxHeight: 200,
+    marginBottom: 20,
+  },
+  cardDescription: {
     fontSize: 16,
     color: "gray",
   },

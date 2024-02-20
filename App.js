@@ -91,13 +91,7 @@ function MainTabScreen() {
           options={{ headerShown: true, title: "Main Screen" }}
         />
       )}
-      {user.userType === "investor" && (
-        <Tab.Screen
-          name="Search"
-          component={SearchScreen}
-          options={{ headerShown: true, title: "Search" }}
-        />
-      )}
+      
       {user.userType === "entrepreneur" && (
         <Tab.Screen
           name="Upload"
@@ -154,8 +148,7 @@ function UploadTabScreen() {
             iconName = "user";
           } else if (route.name === "Chat") {
             iconName = "comments";
-          } else if (route.name === "Search") {
-            iconName = "search";
+          
           } else if (route.name === "Upload") {
             iconName = "upload";
           } else if(route.name === "Projects"){
@@ -175,13 +168,7 @@ function UploadTabScreen() {
           options={{ headerShown: true, title: "Main Screen" }}
         />
       )}
-      {user.userType === "investor" && (
-        <Tab.Screen
-          name="Search"
-          component={SearchScreen}
-          options={{ headerShown: true, title: "Search" }}
-        />
-      )}
+     
       {user.userType === "entrepreneur" && (
         <Tab.Screen
           name="Upload"
@@ -200,17 +187,17 @@ function UploadTabScreen() {
           component={LikedProjects}
           options={{ headerShown: true, title: "Liked Projects" }}
         />
-      )}
+      )} <Tab.Screen
+        name="Projects"
+        component={MyProjects}
+        options={{ headerShown: true, title: "My Project"}}
+        />
       <Tab.Screen
         name="Profile"
         component={ProfileEditScreen}
         options={{ headerShown: true, title: "My Profile" }}
       />
-      <Tab.Screen
-        name="Projects"
-        component={MyProjects}
-        options={{ headerShown: true, title: "My Project"}}
-        />
+     
     </Tab.Navigator>
   );
 }

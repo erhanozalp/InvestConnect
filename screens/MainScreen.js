@@ -28,7 +28,6 @@ const MainScreen = ({ navigation }) => {
         const querySnapshot = await getDocs(projectRef);
         const data = [];
 
-      
         for (const doc of querySnapshot.docs) {
           const docData = doc.data();
           docData.id = doc.id;
@@ -45,15 +44,13 @@ const MainScreen = ({ navigation }) => {
             if (docK.data().projectId === doc.id) {
               projectFound = true;
               break;
-              
             }
           }
 
-          if(projectFound !== true){
-            console.log("docdata: ", docData)
+          if (projectFound !== true) {
+            console.log("docdata: ", docData);
             data.push({ ...docData });
           }
-        
         }
 
         setCards(data);
@@ -89,19 +86,17 @@ const MainScreen = ({ navigation }) => {
     return (
       <TouchableOpacity key={index} onPress={() => handleCardPress(card)}>
         <View style={styles.card}>
-          <View style={styles.cardTextContainer}>
-            <Text style={styles.cardName}>{`${card.name}`}</Text>
-            <Image
-              source={{
-                uri: card.photo,
-              }}
-              style={styles.cardImage}
-            />
-            <Text>{`${card.category}`}</Text>
-            <Text>{`${truncatedDescription}`}</Text>
-            <Text>{`${card.budget}`}</Text>
-            <Text>{`${card.owner}`}</Text>
-            <Text>{`${card.status}`}</Text>
+          <Image
+            source={{ uri: card.photo }}
+            style={styles.cardImage}
+          />
+          <View style={styles.cardDetails}>
+            <Text style={styles.cardName}>{card.name}</Text>
+            <Text style={styles.cardCategory}>Category: {card.category}</Text>
+            <Text style={styles.cardDescription}>Description: {truncatedDescription}</Text>
+            <Text style={styles.cardInfo}>{`Budget: ${card.budget}`}</Text>
+            <Text style={styles.cardInfo}>{`Owner: ${card.owner}`}</Text>
+            <Text style={styles.cardInfo}>{`Status: ${card.status}`}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -171,13 +166,16 @@ const MainScreen = ({ navigation }) => {
           animateOverlayLabelsOpacity
           overlayLabels={{
             left: {
-              title: "NOPE",
+              title: "DISLIKE",
               style: {
                 label: {
                   backgroundColor: "red",
                   borderColor: "red",
                   color: "white",
                   borderWidth: 1,
+                  padding: 10,
+                  borderRadius: 5,
+                  overflow: "hidden",
                 },
                 wrapper: {
                   flexDirection: "column",
@@ -196,6 +194,9 @@ const MainScreen = ({ navigation }) => {
                   borderColor: "green",
                   color: "white",
                   borderWidth: 1,
+                  padding: 10,
+                  borderRadius: 5,
+                  overflow: "hidden",
                 },
                 wrapper: {
                   flexDirection: "column",
@@ -214,6 +215,9 @@ const MainScreen = ({ navigation }) => {
                   borderColor: "blue",
                   color: "white",
                   borderWidth: 1,
+                  padding: 10,
+                  borderRadius: 5,
+                  overflow: "hidden",
                 },
                 wrapper: {
                   flexDirection: "column",
@@ -243,49 +247,80 @@ const styles = StyleSheet.create({
     width: width * 0.9,
     height: height * 0.7,
     borderRadius: 20,
-    shadowRadius: 25,
+    shadowRadius: 10,
     shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
     backgroundColor: "#fff",
-    elevation: 1,
+    elevation: 5,
+    overflow: "hidden",
   },
   cardImage: {
     width: "100%",
-    height: "55%",
+    height: height * 0.4,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
-  cardTextContainer: {
-    padding: 10,
+  cardDetails: {
+    padding: 15,
+    backgroundColor: "gray",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 6,
+    
   },
   cardName: {
     fontSize: 24,
     fontWeight: "bold",
+    marginBottom: 10,
+    color: "#fff",
   },
-  actionContainer: {
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-    marginBottom: 20,
-  },
-  actionButton: {
-    alignItems: "center",
-    borderRadius: 5,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  actionText: {
-    fontSize: 18,
+  cardCategoryTitle: {
+    fontSize: 20,
     fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 5,
   },
-  dislikeButton: {
-    backgroundColor: "#ff5252",
+  cardCategory: {
+    fontSize: 16,
+    color: "#fff",
+    marginBottom: 5,
+    borderRadius: 100,
   },
-  superLikeButton: {
-    backgroundColor: "#4CAF50",
+  cardDescriptionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 5,
   },
-  likeButton: {
-    backgroundColor: "#2196F3",
+  cardDescription: {
+    fontSize: 16,
+    color: "#fff",
+    marginBottom: 10,
+  },
+  cardBudgetTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 5,
+  },
+  cardBudget: {
+    fontSize: 16,
+    color: "#fff",
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  cardInfo: {
+    fontSize: 16,
+    marginBottom: 5,
+    color: "#fff",
   },
   noProjectsMessage: {
     textAlign: "center",

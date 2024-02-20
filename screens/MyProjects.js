@@ -109,7 +109,7 @@ const ProjectItem = ({ item, handleDeleteProject, onPress }) => {
       style={[styles.projectContainer, { transform: [{ translateX: swipeX }] }]}
     >
       <TouchableOpacity style={styles.deleteAction} onPress={handleSwipe}>
-        <Text style={styles.deleteText}>Delete</Text>
+        <Image source={require('../assets/542724-removebg-preview.png')} style={styles.trashIcon} />
       </TouchableOpacity>
       <TouchableOpacity style={styles.projectTouchable} onPress={onPress}>
         <Text style={styles.projectName}>{item.name}</Text>
@@ -169,27 +169,15 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: "center",
     justifyContent: "center",
-    width: 100,
+    width: 65,
     borderRadius: 75,
   },
-  deleteText: {
-    color: "white",
-    fontWeight: "bold",
+  trashIcon: {
+    width: 20,
+    height: 20,
+    tintColor: "white",
   },
-  profileEditButton: {
-    backgroundColor: "#ff5252",
-    borderRadius: 20,
-    marginTop: 20,
-    paddingVertical: 15,
-    alignItems: "center",
-    width: 200,
-    marginBottom: 50,
-  },
-  profileEditText: {
-    fontSize: 18,
-    color: "white",
-    fontWeight: "bold",
-  },
+ 
 });
 
 export default MyProjects;
