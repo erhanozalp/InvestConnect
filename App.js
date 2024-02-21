@@ -18,6 +18,7 @@ import UploadScreen from "./screens/UploadScreen";
 import ProjectDetails from "./screens/ProjectDetails";
 import MyProjects from "./screens/MyProjects";
 import LikedProjects from "./screens/LikedProjects";
+import ChatBoxScreen from "./screens/ChatBox";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -99,11 +100,13 @@ function MainTabScreen() {
           options={{ headerShown: true, title: "Upload Project" }}
         />
       )}
-      <Tab.Screen
-        name="Chat"
-        component={ChatStackScreen}
-        options={{ title: "Chat" }}
-      />
+      {user.userType === "investor" && (
+        <Tab.Screen
+          name="Chat"
+          component={ChatBoxScreen}
+          options={{ headerShown: true, title: "Chat" }}
+        />
+      )}
       {user.userType === "investor" && (
         <Tab.Screen
           name="Liked"
@@ -175,11 +178,13 @@ function UploadTabScreen() {
           options={{ headerShown: true, title: "Upload Project" }}
         />
       )}
-      <Tab.Screen
-        name="Chat"
-        component={ChatStackScreen}
-        options={{ title: "Chat" }}
-      />
+      {user.userType === "entrepreneur" && (
+        <Tab.Screen
+          name="Chat"
+          component={ChatBoxScreen}
+          options={{ headerShown: true, title: "Chat" }}
+        />
+      )}
       {user.userType === "investor" && (
         <Tab.Screen
           name="Liked"

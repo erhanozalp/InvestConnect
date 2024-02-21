@@ -8,7 +8,14 @@ import {
   ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { collection, getDoc, query, where, addDoc,doc } from "firebase/firestore";
+import {
+  collection,
+  getDoc,
+  query,
+  where,
+  addDoc,
+  doc,
+} from "firebase/firestore";
 import { FIREBASE_DB } from "../firebase";
 import { auth } from "../firebase";
 
@@ -22,7 +29,7 @@ const ProjectDetails = ({ route }) => {
 
   const handleChat = async () => {
     const q = await getDoc(doc(FIREBASE_DB, "users", card.entrepreneurId));
-    console.log("q: ", q.data().email)
+    console.log("q: ", q.data().email);
 
     navigation.navigate("ChatList", { email: q.data().email });
   };

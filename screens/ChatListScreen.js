@@ -49,46 +49,36 @@ export default function Chat({ route }) {
   }, [navigation]);
 
   useLayoutEffect(() => {
-    const MessagesQuery = query(
-      collection(FIREBASE_DB, "chats"),
-      where("user._id", "==", auth?.currentUser?.email)
+    const unsubscribe = onSnapshot(
+      query(
+        collection(FIREBASE_DB, "chats"),
+        orderBy("createdAt", "desc") // Mesajları tarihe göre sırala
+      ),
+      (querySnapshot) => {
+        const messages = querySnapshot.docs.map((doc) => ({
+          _id: doc.id,
+          ...doc.data(),
+        }));
+
+        console.log("messages", messages);
+
+        // Sadece belirli alıcıya veya belirli göndericiye ait mesajları filtrele
+        const filteredMessages = messages.filter((message) => {
+          return (
+            (message.receiverId === email.toLowerCase() &&
+              message.senderId === auth?.currentUser?.email) ||
+            (message.senderId === email.toLowerCase() &&
+              message.receiverId === auth?.currentUser?.email)
+          );
+        });
+
+        console.log("filteredMessages", filteredMessages);
+
+        setMessages(filteredMessages);
+      }
     );
 
-    const Messages2Query = query(
-      collection(FIREBASE_DB, "chats"),
-      where("user._id", "==", email.toLowerCase())
-    );
-    console.log("MessagesQuery", MessagesQuery);
-
-    const unsubscribe = onSnapshot(MessagesQuery, (querySnapshot) => {
-      const messages1 = querySnapshot.docs.map((doc) => ({
-        _id: doc.data()._id,
-        createdAt: doc.data().createdAt.toDate(),
-        text: doc.data().text,
-        user: doc.data().user,
-      }));
-
-      const mergedMessages = [...messages1];
-      setMessages(mergedMessages);
-    });
-
-    const unsubscribe2 = onSnapshot(Messages2Query, (querySnapshot) => {
-      const messages2 = querySnapshot.docs.map((doc) => ({
-        _id: doc.data()._id,
-        createdAt: doc.data().createdAt.toDate(),
-        text: doc.data().text,
-        user: doc.data().user,
-      }));
-      const mergedMessages = [...messages2];
-      setMessages((prevMessages) => [...prevMessages, ...mergedMessages]);
-    });
-    console.log("messages", messages);
-    const unsubscribeAll = () => {
-      unsubscribe();
-      unsubscribe2();
-    };
-
-    return unsubscribeAll;
+    return () => unsubscribe();
   }, []);
 
   const onSend = useCallback((messages = []) => {
@@ -97,12 +87,14 @@ export default function Chat({ route }) {
     );
     // setMessages([...messages, ...messages]);
     console.log("asdas", messages[0]);
-    const { _id, createdAt, text, user } = messages[0];
+    const { _id, createdAt, text, user, senderId, receiverId } = messages[0];
     addDoc(collection(FIREBASE_DB, "chats"), {
       _id,
       createdAt,
       text,
       user,
+      senderId: auth?.currentUser?.email,
+      receiverId: email.toLowerCase(),
     });
   }, []);
 
