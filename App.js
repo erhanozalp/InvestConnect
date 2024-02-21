@@ -19,6 +19,7 @@ import ProjectDetails from "./screens/ProjectDetails";
 import MyProjects from "./screens/MyProjects";
 import LikedProjects from "./screens/LikedProjects";
 import ChatBoxScreen from "./screens/ChatBox";
+import ProjectDetailsEnt from "./screens/ProjectDetailsEnt";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -233,6 +234,11 @@ function App() {
         <Stack.Screen
           name="ProjectDetails"
           component={ProjectDetails}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ProjectDetailsEnt"
+          component={ProjectDetailsEnt}
           options={{ headerShown: false }}
         />
         <Stack.Screen

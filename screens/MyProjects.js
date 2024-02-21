@@ -52,7 +52,7 @@ const MyProjects = () => {
   };
 
   const navigateToProjectDetails = (card) => {
-    navigation.navigate("ProjectDetails", { card }); // ProjectDetails'e gitmek için gerekli navigasyon kodu
+    navigation.navigate("ProjectDetailsEnt", { card }); // ProjectDetails'e gitmek için gerekli navigasyon kodu
   };
 
   const navigateToProfileEdit = () => {

@@ -19,7 +19,7 @@ import {
 import { FIREBASE_DB } from "../firebase";
 import { auth } from "../firebase";
 
-const ProjectDetails = ({ route }) => {
+const ProjectDetailsEnt = ({ route }) => {
   const { card } = route.params;
   const navigation = useNavigation();
 
@@ -47,9 +47,9 @@ const ProjectDetails = ({ route }) => {
       <TouchableOpacity style={styles.goBackButton} onPress={handleGoBack}>
         <Text style={styles.goBackText}>Go Back</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.goBackButton} onPress={handleChat}>
+      {/* <TouchableOpacity style={styles.goBackButton} onPress={handleChat}>
         <Text style={styles.goBackText}>Chat With Project Owner</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 };
@@ -97,4 +97,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProjectDetails;
+export default ProjectDetailsEnt;
