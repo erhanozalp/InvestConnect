@@ -125,16 +125,26 @@ const ProjectItem = ({ item, handleDeleteProject, onPress }) => {
     }).start(() => handleDeleteProject(item));
   };
 
+  const limitSentences = (text, limit = 3) => {
+    const sentences = text.match(/[^\.!\?]+[\.!\?]+/g) || [];
+    return sentences.slice(0, limit).join(" ");
+  };
+
   return (
     <Animated.View
       style={[styles.projectContainer, { transform: [{ translateX: swipeX }] }]}
     >
       <TouchableOpacity style={styles.deleteAction} onPress={handleSwipe}>
-        <Text style={styles.deleteText}>Delete</Text>
+        <Image
+          source={require("../assets/542724-removebg-preview.png")}
+          style={styles.trashIcon}
+        />
       </TouchableOpacity>
       <TouchableOpacity style={styles.projectTouchable} onPress={onPress}>
         <Text style={styles.projectName}>{item.name}</Text>
-        <Text style={styles.projectDescription}>{item.description}</Text>
+        <Text style={styles.projectDescription}>
+          {limitSentences(item.description)}
+        </Text>
       </TouchableOpacity>
     </Animated.View>
   );
@@ -191,8 +201,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: "center",
     justifyContent: "center",
-    width: 100,
+    width: 65,
     borderRadius: 75,
+  },
+  trashIcon: {
+    width: 20,
+    height: 20,
+    tintColor: "white",
   },
   deleteText: {
     color: "white",

@@ -29,7 +29,10 @@ const MyProjects = () => {
   const handleDeleteProject = async (item) => {
     console.log("handleDeleteProject", item);
     await deleteDoc(doc(FIREBASE_DB, "project", item.id));
-    const q = query(collection(FIREBASE_DB, "invest"), where("projectId", "==", item.id));
+    const q = query(
+      collection(FIREBASE_DB, "invest"),
+      where("projectId", "==", item.id)
+    );
     const querySnapshot = await getDocs(q);
     const promises = querySnapshot.docs.map(async (docX) => {
       await deleteDoc(doc(FIREBASE_DB, "invest", docX.id));
@@ -40,12 +43,16 @@ const MyProjects = () => {
 
   const renderProjectItem = ({ item }) => {
     return (
-      <ProjectItem item={item} handleDeleteProject={handleDeleteProject} onPress={() => navigateToProjectDetails(item)}/>
+      <ProjectItem
+        item={item}
+        handleDeleteProject={handleDeleteProject}
+        onPress={() => navigateToProjectDetails(item)}
+      />
     );
   };
 
   const navigateToProjectDetails = (card) => {
-    navigation.navigate("ProjectDetails",{card}); // ProjectDetails'e gitmek için gerekli navigasyon kodu
+    navigation.navigate("ProjectDetails", { card }); // ProjectDetails'e gitmek için gerekli navigasyon kodu
   };
 
   const navigateToProfileEdit = () => {
@@ -74,7 +81,6 @@ const MyProjects = () => {
     }
   };
   useEffect(() => {
-   
     fetchData();
   }, []);
 
@@ -86,7 +92,7 @@ const MyProjects = () => {
         data={project}
         renderItem={renderProjectItem}
         keyExtractor={(item) => item.id}
-        onPress ={() => handleCardPress(item) }
+        onPress={() => handleCardPress(item)}
         style={styles.projectList}
       />
     </View>
@@ -104,16 +110,26 @@ const ProjectItem = ({ item, handleDeleteProject, onPress }) => {
     }).start(() => handleDeleteProject(item)); // item gönderildi
   };
 
+  const limitSentences = (text, limit = 3) => {
+    const sentences = text.match(/[^\.!\?]+[\.!\?]+/g) || [];
+    return sentences.slice(0, limit).join(" ");
+  };
+
   return (
     <Animated.View
       style={[styles.projectContainer, { transform: [{ translateX: swipeX }] }]}
     >
       <TouchableOpacity style={styles.deleteAction} onPress={handleSwipe}>
-        <Image source={require('../assets/542724-removebg-preview.png')} style={styles.trashIcon} />
+        <Image
+          source={require("../assets/542724-removebg-preview.png")}
+          style={styles.trashIcon}
+        />
       </TouchableOpacity>
       <TouchableOpacity style={styles.projectTouchable} onPress={onPress}>
         <Text style={styles.projectName}>{item.name}</Text>
-        <Text style={styles.projectDescription}>{item.description}</Text>
+        <Text style={styles.projectDescription}>
+          {limitSentences(item.description)}
+        </Text>
       </TouchableOpacity>
     </Animated.View>
   );
@@ -177,7 +193,6 @@ const styles = StyleSheet.create({
     height: 20,
     tintColor: "white",
   },
- 
 });
 
 export default MyProjects;

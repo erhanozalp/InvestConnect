@@ -47,9 +47,9 @@ const ProjectDetails = ({ route }) => {
       <TouchableOpacity style={styles.goBackButton} onPress={handleGoBack}>
         <Text style={styles.goBackText}>Go Back</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.goBackButton} onPress={handleChat}>
+      {/* <TouchableOpacity style={styles.goBackButton} onPress={handleChat}>
         <Text style={styles.goBackText}>Chat With Project Owner</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 };
