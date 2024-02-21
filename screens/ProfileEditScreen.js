@@ -20,6 +20,16 @@ const ProfileEditScreen = ({ navigation }) => {
     navigation.navigate('MyProjects');
   };
 
+  const handleSignOut = async () => {
+    try {
+      await auth.signOut();
+      // Navigate to login screen or any other screen after sign out
+      navigation.navigate('Login');
+    } catch (error) {
+      console.log('Error signing out: ', error.message);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -59,6 +69,10 @@ const ProfileEditScreen = ({ navigation }) => {
           editable={false} // Make input read-only
         />
       </View>
+
+      <TouchableOpacity style={styles.saveButton} onPress={handleSignOut}>
+        <Text style={styles.saveButtonText}>Sign Out</Text>
+      </TouchableOpacity>
       
       
     </ScrollView>
