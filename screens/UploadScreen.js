@@ -123,10 +123,19 @@ const UploadScreen = () => {
 
         <View style={styles.inputRow}>
           <TextInput
-            style={styles.inputHalf}
+            style={styles.inputFull}
             placeholder="Project Name"
             value={projectName}
             onChangeText={setProjectName}
+          />
+          
+        </View>
+        <View style={styles.inputRow}>
+        <TextInput
+            style={styles.inputHalf}
+            placeholder="Project Status"
+            value={status}
+            onChangeText={setStatus}
           />
           <TextInput
             style={styles.inputHalf}
@@ -135,17 +144,10 @@ const UploadScreen = () => {
             onChangeText={setBudget}
           />
         </View>
-
         <View style={styles.inputRow}>
-          <TextInput
-            style={styles.inputHalf}
-            placeholder="Project Status"
-            value={status}
-            onChangeText={setStatus}
-          />
+         
           <View style={styles.pickerContainer}>
             <RNPickerSelect
-              style={{ inputAndroid: { ...pickerSelectStyles.inputAndroid } }}
               onValueChange={(value) => setCategory(value)}
               placeholder={{ label: "Select Category", value: null }}
               items={[
@@ -160,9 +162,7 @@ const UploadScreen = () => {
                 { label: "Virtual and Augmented Reality", value: "Virtual and Augmented Reality" },
                 { label: "Mobile and Internet Services", value: "Mobile and Internet Services" },
               ]}
-              Icon={() => {
-                return <Icon name="caret-down" size={24} color="gray" />;
-              }}
+              
             />
           </View>
         </View>
@@ -237,6 +237,7 @@ const styles = StyleSheet.create({
     width: "80%",
     marginBottom: 15,
   },
+  
   inputHalf: {
     backgroundColor: "white",
     borderColor: "#ddd",
@@ -255,8 +256,26 @@ const styles = StyleSheet.create({
     width: "47%",
     height: 50,
   },
+  inputFull: {
+    backgroundColor: "white",
+    borderColor: "#ddd",
+    borderWidth: 1,
+    borderRadius: 25,
+    paddingLeft: 20,
+    fontSize: 16,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
+    width: "100%",
+    height: 50,
+  },
   pickerContainer: {
-    width: "47%",
+    width: "100%",
     height: 50,
     justifyContent: "center",
     borderRadius: 25,

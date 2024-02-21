@@ -21,9 +21,11 @@ import {
 } from "firebase/firestore";
 import { FIREBASE_DB } from "../firebase";
 import { auth } from "../firebase";
+import { useIsFocused } from '@react-navigation/native';
 
 const MyProjects = () => {
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
   const [projects, setProjects] = useState([
     { id: "1", name: "Proje 1", description: "Proje 1 Açıklaması" },
     { id: "2", name: "Proje 2", description: "Proje 2 Açıklaması" },
@@ -77,8 +79,11 @@ const MyProjects = () => {
         dataa.push({ ...data.data(), id: data.id });
       });
       await Promise.all(promises);
-
-      setProject(dataa);
+      console.log("dataa leng", dataa.length);
+      console.log("project leng", project.length);
+        setProject(dataa);
+     
+      
       console.log("gelen true projeler: ", project);
     } catch (error) {
       console.log("fetchData fonksiyonunda bir hata oluştu:", error);
@@ -88,7 +93,7 @@ const MyProjects = () => {
   useEffect(() => {
    
     fetchData();
-  }, []);
+  }, [isFocused]);
   const handleCardPress = (card) => {
     // Projeyi detaylar sayfasına yönlendir
     navigation.navigate("ProjectDetails", { card });
