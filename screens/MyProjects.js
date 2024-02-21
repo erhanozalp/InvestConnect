@@ -110,7 +110,7 @@ const ProjectItem = ({ item, handleDeleteProject, onPress }) => {
     }).start(() => handleDeleteProject(item)); // item gönderildi
   };
 
-  const limitSentences = (text, limit = 3) => {
+  const limitSentences = (text, limit = 1) => {
     const sentences = text.match(/[^\.!\?]+[\.!\?]+/g) || [];
     return sentences.slice(0, limit).join(" ");
   };
