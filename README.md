@@ -37,12 +37,8 @@ To get started with InvestConnect, follow these steps:
 ## Future Enhancements
 
 InvestConnect has the potential for continuous improvement and expansion. Future features may include:
-
-- **Video Calls:** Facilitate face-to-face communication between investors and entrepreneurs.
   
 - **Chat Section Enhancements:** Introduce new functionalities to streamline negotiations and agreement processes.
-
-- **Regional Project Exploration:** Enable users to explore projects specific to their geographical preferences.
 
 InvestConnect stands as a promising tool in the realm of project funding, offering a fresh and efficient approach to connecting investors with innovative ideas. This platform has the capacity to transform the way investments are made, contributing to the realization of new and impactful projects aligned with sustainable development goals.
 
