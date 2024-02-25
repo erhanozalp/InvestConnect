@@ -31,8 +31,9 @@ InvestConnect leverages the speed, structure, and authentication features of the
 To get started with InvestConnect, follow these steps:
 
 1. Clone the repository: `git clone https://github.com/erhanozalp/InvestConnect.git`
-2. Install dependencies: `npm install`
-3. Run the application: `npx expo start`
+2. Go to folder: `cd.. InvestConnect`
+3. Install dependencies: `npm install`
+4. Run the application: `npx expo start`
 
 ## Future Enhancements
 
