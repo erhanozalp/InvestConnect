@@ -1,16 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { collection, getDoc, query, where, addDoc, doc } from "firebase/firestore";
+import { FIREBASE_DB } from "../firebase";
+import { auth } from "../firebase";
 
-const ProfileEditScreen = () => {
-  const [name, setName] = useState('Mert');
-  const [age, setAge] = useState('29');
-  const [bio, setBio] = useState('Biraz sanat, biraz teknoloji...');
+const ProfileEditScreen = ({ navigation }) => {
+  const [name, setName] = useState('');
+  const [surname, setSurname] = useState('');
+  const [email, setEmail] = useState('');
   const [profileImage, setProfileImage] = useState(require('../assets/user2.png')); 
+  const user = auth.currentUser;
+  const [User, setUser] = useState(null);
 
   const handleSave = () => {
-    // Kullanıcı bilgilerini kaydetme işlemleri
-    console.log('Kaydedilen:', { name, age, bio });
+    console.log('Saved:', { name, surname, email });
   };
+
+  const handleMyProjects = () => {
+    navigation.navigate('MyProjects');
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await auth.signOut();
+      // Navigate to login screen or any other screen after sign out
+      navigation.navigate('Login');
+    } catch (error) {
+      console.log('Error signing out: ', error.message);
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const docSnap = await getDoc(doc(FIREBASE_DB, "users", user.uid));
+        setUser(docSnap.data());
+      } catch(error) {
+        console.log("Error in fetchData", error)
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <ScrollView style={styles.container}>
@@ -18,30 +48,33 @@ const ProfileEditScreen = () => {
         <Image source={profileImage} style={styles.profileImage} />
       </View>
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Ad</Text>
+        <Text style={styles.label}>Name:</Text>
         <TextInput
           style={styles.input}
-          value={name}
-          onChangeText={setName}
+          value={User ? User.name : ''}
+          editable={false} // Make input read-only
         />
-        <Text style={styles.label}>Yaş</Text>
+        
+        <Text style={styles.label}>Surname:</Text>
         <TextInput
           style={styles.input}
-          value={age}
-          onChangeText={setAge}
-          keyboardType='numeric'
+          value={User ? User.surname : ''}
+          editable={false} // Make input read-only
         />
-        <Text style={styles.label}>Biyografi</Text>
+       
+        <Text style={styles.label}>Email:</Text>
         <TextInput
           style={styles.input}
-          value={bio}
-          onChangeText={setBio}
-          multiline
+          value={User ? User.email : ''}
+          editable={false} // Make input read-only
         />
       </View>
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveButtonText}>Kaydet</Text>
+
+      <TouchableOpacity style={styles.saveButton} onPress={handleSignOut}>
+        <Text style={styles.saveButtonText}>Sign Out</Text>
       </TouchableOpacity>
+      
+      
     </ScrollView>
   );
 };
@@ -52,6 +85,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f9fa',
   },
   imageContainer: {
+    marginTop: 80,
     alignItems: 'center',
     marginVertical: 20,
   },
@@ -69,7 +103,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   input: {
-    backgroundColor: 'white',
+    backgroundColor: '#f0f0f0', // Change input background color to distinguish it from editable inputs
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,
@@ -91,7 +125,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
     fontWeight: 'bold',
-  },
+  }
 });
 
 export default ProfileEditScreen;

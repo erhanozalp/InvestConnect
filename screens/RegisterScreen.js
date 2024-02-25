@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   View,
   Text,
@@ -6,16 +6,49 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  Alert,
 } from "react-native";
+import { auth } from "../firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { collection, doc, setDoc, getDoc, addDoc } from "firebase/firestore";
+import { FIREBASE_DB } from "../firebase";
 
 const RegisterScreen = ({ navigation }) => {
-  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [surname, setSurname] = useState("");
+  const [userType, setUserType] = useState("users");
 
-  const handleRegister = () => {
-    console.log("Kayıt bilgileri:", username, email, password, passwordConfirm);
+  const handleRegister = async () => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+        name,
+        surname
+      );
+      const user = userCredential.user;
+        console.log("user", user);
+      await setDoc(doc(FIREBASE_DB, "users",user.uid), {
+        name: name,
+        surname: surname,
+        email: email,
+        password: password,
+        userType: userType,
+      });
+
+      if (user) {
+        if (userType === "investor") {
+          navigation.navigate("Main");
+        } else {
+          navigation.navigate("Upload");
+        }
+      }
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    }
   };
 
   return (
@@ -26,40 +59,70 @@ const RegisterScreen = ({ navigation }) => {
 
       <TextInput
         style={styles.input}
-        placeholder="Kullanıcı Adı"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="E-posta"
+        placeholder="Email"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
       />
       <TextInput
         style={styles.input}
-        placeholder="Şifre"
-        secureTextEntry
+        placeholder="Password"
         value={password}
+        secureTextEntry
         onChangeText={setPassword}
       />
       <TextInput
         style={styles.input}
-        placeholder="Şifre Tekrarı"
-        secureTextEntry
-        value={passwordConfirm}
-        onChangeText={setPasswordConfirm}
+        placeholder="Name"
+        value={name}
+        onChangeText={setName}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Surname"
+        value={surname}
+        onChangeText={setSurname}
       />
 
+      <View style={styles.radioContainer}>
+        <TouchableOpacity
+          style={styles.radioButton}
+          onPress={() => setUserType("investor")}
+        >
+          <Text
+            style={
+              userType === "investor"
+                ? styles.radioButtonTextSelected
+                : styles.radioButtonText
+            }
+          >
+            Investor
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.radioButton}
+          onPress={() => setUserType("entrepreneur")}
+        >
+          <Text
+            style={
+              userType === "entrepreneur"
+                ? styles.radioButtonTextSelected
+                : styles.radioButtonText
+            }
+          >
+            Entrepreneur
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Kayıt Ol</Text>
+        <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
 
       <View style={styles.loginContainer}>
-        <Text>Zaten bir hesabınız var mı? </Text>
+        <Text>You already have an account? </Text>
         <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-          <Text style={styles.loginText}>Giriş Yap</Text>
+          <Text style={styles.loginText}>Login</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -125,6 +188,27 @@ const styles = StyleSheet.create({
   },
   loginText: {
     color: "#ff5252", // Giriş yap metni rengini buton rengiyle uyumlu yaptık
+    fontWeight: "bold",
+  },
+  radioContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "80%",
+    marginBottom: 15,
+  },
+  radioButton: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  radioButtonText: {
+    color: "#333",
+    fontWeight: "bold",
+  },
+  radioButtonTextSelected: {
+    color: "#ff5252",
     fontWeight: "bold",
   },
 });
